@@ -1,0 +1,46 @@
+{% extends '../dashboard.html' %}
+{% block content %}
+  <div class="container ">
+    <div class="row">
+      <div class="col">
+        <h2> </h2>
+        <div class="card m-5" style="">
+  <div class="card-body box-shadow-2">
+    <h5 class="card-title">Complaint</h5>
+    <h6 class="card-subtitle mb-2 text-body-secondary"></h6>
+      <form method="post">
+          {% csrf_token %}
+          <div class="col-md-4">
+    <label for="validationDefault01" class="form-label">Subject</label>
+    <input type="text" class="form-control" id="validationDefault01" value="{{comp_reply.subject}}" readonly required>
+  </div>
+
+
+  <div class="col-md-6">
+    <label for="validationDefault03" class="form-label">Complaint</label>
+    <input type="text"  class="form-control" id="validationDefault03" value="{{comp_reply.complaint}}" readonly required>
+  </div>
+
+  <div class="col-md-3">
+    <label for="validationDefault05" class="form-label">Date</label>
+    <input type="text" class="form-control" id="validationDefault05" value="{{comp_reply.date}}" readonly required>
+  </div>
+   <div class="col-md-4">
+    <label for="validationDefault01" class="form-label">Reply</label>
+    <input type="text" class="form-control" id="validationDefault06" name="reply" required>
+  </div>
+
+  <div class="col-12 mt-2">
+    <button class="btn btn-primary" type="submit">Submit form</button>
+  </div>
+
+        </form>
+  </div>
+</div>
+
+
+      </div>
+
+    </div>
+  </div>
+{% endblock %}

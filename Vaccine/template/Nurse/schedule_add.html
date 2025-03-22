@@ -1,0 +1,29 @@
+{% extends 'Nurse/nurse_dashboard.html' %}
+{% block content %}
+{% load crispy_forms_tags %}
+ <div class="container ">
+    <div class="row">
+      <div class="col d-flex justify-content-center">
+        <h2> </h2>
+        <div class="card m-5" style="width:34rem">
+  <div class="card-body box-shadow-2">
+    <h5 class="card-title">Schedule Vaccine</h5>
+    <h6 class="card-subtitle mb-2 text-body-secondary"></h6>
+      <form method="post">
+          {% csrf_token %}
+          {{ form| crispy }}
+
+  <div class="col-12 mt-2">
+    <button class="btn btn-primary" type="submit">Submit form</button>
+  </div>
+
+        </form>
+  </div>
+</div>
+
+
+      </div>
+
+    </div>
+  </div>
+{% endblock %}

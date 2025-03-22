@@ -1,0 +1,52 @@
+{% extends '../dashboard.html' %}
+{% block content %}
+    <div class="container">
+        <div class="container">
+          <div class="row">
+            <div class="col my-4">
+              <h2> VACCINE </h2>
+            </div>
+            <div class="col text-end my-4">
+              <a href="{% url 'add_vaccine' %}">
+                <button class="btn btn-primary me-2"><i class="bi bi-plus-lg me-2"></i>Add Vaccine</button>
+              </a>
+          </div>
+            </div>
+
+          </div>
+      <div class="container">
+      <div class="row">
+        <div class="col">
+          <table class="table">
+          <thead>
+           <tr>
+            <th scope="col">#</th>
+            <th scope="col">Vaccine Name</th>
+            <th scope="col">Vaccine Type</th>
+            <th scope="col">description</th>
+            <!--<th scope="col"></th>-->
+            <th scope="col"></th>
+            <th scope="col"></th>
+
+          </tr>
+        </thead>
+      <tbody>
+        {% for i in vaccine_data %}
+        <tr>
+         <th scope="row">{{i.id}}</th>
+          <td>{{i.vaccine_name}}</td>
+          <td>{{i.vaccine_type}}</td>
+          <td>{{i.description}}</td>
+<!--      <td>{{i.email}}</td>-->
+          <td><a href="{% url 'vaccineEdit' i.id %}"><i class="bi bi-pencil-square text-info me-2"> </i>EDIT</a></td>
+          <td> <a href="{% url 'vaccineDelete' i.id %}"><i class="bi bi-trash text-danger">   </i>DELETE</a></td>
+       </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+          </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

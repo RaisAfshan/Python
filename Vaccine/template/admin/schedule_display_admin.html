@@ -1,0 +1,48 @@
+{% extends 'dashboard.html' %}
+{% block content %}
+    <div class="container">
+    <div class="container">
+      <div class="row">
+          <div  class="col">
+              <h2 class="my-4 ms-1">VACCINE SCHEDULE LIST</h2>
+          </div>
+
+    </div>
+          </div>
+      <div class="container">
+         <div class="row">
+        <div class="col">
+            <table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Vaccine</th>
+      <th scope="col">Date</th>
+      <th scope="col">Start Time</th>
+      <th scope="col">End Time</th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+
+
+    </tr>
+  </thead>
+  <tbody>
+  {% for i in sa %}
+    <tr>
+      <th scope="row">{{i.id}}</th>
+      <td>{{i.vaccine}}</td>
+      <td>{{i.date}}</td>
+      <td>{{i.start_time}}</td>
+        <td>{{i.end_time}}</td>
+      <td></td>
+      <td></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+        </div>
+      </div>
+      </div>
+
+    </div>
+{% endblock %}

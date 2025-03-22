@@ -1,0 +1,30 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Title</title>-->
+<!--</head>-->
+<!--<body>-->
+
+<!--</body>-->
+<!--</html>-->
+{% extends '../dashboard.html' %}
+{% block content %}
+{% load crispy_forms_tags %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <form method="post">
+                 {% csrf_token %}
+                {{upd_form | crispy}}
+                    <button type="submit" class="btn " style="background-color:#fca311 !important">Add</button>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+
+{% endblock %}
+

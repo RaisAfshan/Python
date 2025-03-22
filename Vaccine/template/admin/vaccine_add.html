@@ -1,0 +1,21 @@
+{% extends '../dashboard.html' %}
+{% block content %}
+{% load crispy_forms_tags %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+             <form method="post">
+                 {% csrf_token %}
+                {{vacc_form | crispy}}
+                 <div class="me-0">
+                           <button type="submit" class="btn " style="background-color:#fca311 !important">Add</button>
+                 </div>
+             </form>
+        </div>
+
+    </div>
+
+</div>
+
+
+{% endblock %}
