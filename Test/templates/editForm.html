@@ -1,0 +1,18 @@
+{% extends 'user_dash.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+  <div class=" d-flex align-items-center justify-content-center  " style="min-height:100vh;">
+            <div class="card" style="width: 30rem">
+              <div class="card-body">
+                <h2 class="card-title text-center">Edit Task</h2>
+                     <form method="POST">
+                        {% csrf_token %}
+                        {{updateTask|crispy}}
+
+                        <button class="btn btn-primary" type="submit"> Edit </button>
+                    </form>
+
+              </div>
+            </div>
+  </div>
+{% endblock %}
