@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 
-from django.conf.global_settings import MEDIA_ROOT, STATICFILES_DIRS
+from django.conf.global_settings import MEDIA_ROOT, STATICFILES_DIRS, AUTH_USER_MODEL
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -72,6 +72,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "EKartProject.wsgi.application"
+AUTH_USER_MODEL ='Ekartapp.Custom_User'
 
 
 # Database
