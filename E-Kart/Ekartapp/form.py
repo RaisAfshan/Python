@@ -16,7 +16,7 @@ class CustomUserForm(UserCreationForm):
         fields = ('username','password1','password2')
 
 class UserForm(forms.ModelForm):
-    gender = forms.ChoiceField(label='Gender', choices= GENDER_CHOICES, required=True)
+    gender = forms.ChoiceField(label='Gender', choices= GENDER_CHOICES, required=True, widget=forms.RadioSelect(attrs={'class':'form-check-input mb-3'} ),initial='Male')
 
     class Meta:
         model = UserModel
