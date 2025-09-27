@@ -34,7 +34,7 @@ def loginUser(request):
     if user is not None:
         login(request,user)
         if user.is_staff:
-            return redirect('index')
+            return redirect('adminDash')
         if user.is_user:
             return redirect('index')
         else:

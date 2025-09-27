@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
 from Ekartapp.Choices import GENDER_CHOICES
-from Ekartapp.models import Custom_User, UserModel
+from Ekartapp.models import Custom_User, UserModel, Category
 
 
 class CustomUserForm(UserCreationForm):
@@ -21,3 +21,17 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = UserModel
         fields = ('fullName','phoneNumber','gender','profilePicture','email')
+
+class CategoryForm(forms.ModelForm):
+
+    class Meta:
+        model = Category
+        fields = ('name','parent')
+
+    def __init__(self,*args, **kwargs):
+        super().__init__(*args,**kwargs)
+
+        self.fields['parent'].queryset = Category.objects.filter(parent__isnull=True, status=True)
+
+
+

@@ -1,0 +1,65 @@
+{% extends 'admin/adminDashboard.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <a href="{% url 'categoryForm' %}">
+      <button class="btn btn-primary mb-3">Add Category</button>
+    </a>
+
+    <h3 class="text-center mb-3">All Categories</h3>
+
+    <!-- Messages -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-success alert-dismissible fade show  alert-{{ message.tags }} mt-2" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="col">
+      <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th>Main Category</th>
+            <th>Subcategories</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for category in categories %}
+            {% if not category.parent and category.status %}
+              <tr>
+                  <td>{{ category.name }}</td>
+                  <td></td>
+                  <td>
+                      <a href="{% url 'categoryEdit' category.id %}" class="btn btn-sm btn-outline-warning">Edit</a>
+                      <a href="{% url 'categoryDelete' category.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                  </td>
+              </tr>
+
+                  {% for sub in category.subcategory.all %}
+                    {% if sub.status %}
+                          <tr>
+                              <td>-- {{ sub.name }}</td>
+                              <td></td>
+                              <td>
+                                  <a href="{% url 'categoryEdit' sub.id %}" class="btn btn-sm btn-outline-warning">Edit</a>
+                                  <a href="{% url 'categoryDelete' sub.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                              </td>
+                          </tr>
+                      {% endif %}
+                  {% endfor %}
+              {% endif %}
+          {% endfor %}
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
