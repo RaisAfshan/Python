@@ -1,0 +1,54 @@
+{% extends 'admin/adminDashboard.html' %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <h3 class="text-center mb-3"> Product Images </h3>
+      <a href="{% url 'imageAdd' %}">
+        <button class="btn btn-primary mb-3"> Add Image </button>
+      </a>
+
+      <div class ="alert alert-success alert-dismissible fade show alert- mt-2" role="alert">
+<!--        message-->
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+      </div>
+
+      <div class="col">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Brand</th>
+              <th scope="col">Title</th>
+              <th scope="col">category</th>
+              <th scope="col">image 1</th>
+              <th scope="col">image 2</th>
+              <th scope="col">image 3</th>
+              <th scope="col">image 4</th>
+              <th scope="col">Primary Variant</th>
+              <th scope="col">Secondary Variant</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <th>id</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+              <a href="{% url 'imageEdit' %}" class="btn btn-sm btn-outline-warning me-3"> edit </a>
+              <a href="#" class="btn btn-sm btn-outline-danger"> delete </a>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

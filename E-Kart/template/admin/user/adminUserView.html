@@ -1,0 +1,60 @@
+{% extends 'admin/adminDashboard.html' %}
+{% block content %}
+
+
+
+<div class="container">
+  <div class="row">
+    <h3 class="text-center mb-3"> Customer List </h3>
+    <div class="col">
+        <table class="table table-hover">
+            <thead>
+              <tr>
+                <th class="col">#</th>
+                <th class="col"> Username</th>
+                <th class="col">Profile pic</th>
+                <th class="col"> Customer full name</th>
+                <th class="col">Phone number</th>
+                <th class="col">gender</th>
+                <th class="col">price</th>
+                <th class="col">Email</th>
+                <th class="col">Created at</th>
+                <th class="col">Actions</th>
+
+              </tr>
+            </thead>
+          <tbody>
+          <tr>
+              <td>id</td>
+              <td></td>
+              <td>
+                 <img src="{{ student.profile_pic.url }}" alt="{{ student.name }}" width="40" class="rounded-circle">
+              </td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+
+              <td>
+                  <a href="" class="btn btn-sm btn-outline-warning me-3">
+                      edit
+                  </a>
+
+                  <a href="" class="btn btn-sm btn-outline-danger">
+                      delete
+                  </a>
+              </td>
+
+
+          </tr>
+          </tbody>
+        </table>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}

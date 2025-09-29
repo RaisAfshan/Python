@@ -52,8 +52,10 @@ class Product(models.Model):
     title=models.CharField(max_length=300)
     description = models.TextField()
     price = models.DecimalField(max_digits=10,decimal_places=2)
-    status=models.BooleanField(default=False)
+    status=models.BooleanField(default=False) #True
     category = models.ForeignKey(Category,on_delete=models.CASCADE,related_name="category_products")
+    # created_at
+
 
 # class ProductVariant(models.Model):
 #     attribute = models.CharField(max_length=200,blank=True,null=True)

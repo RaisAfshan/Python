@@ -1,0 +1,58 @@
+{% extends 'admin/adminDashboard.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <a href="{% url 'productAdd' %}" >
+      <button class="btn btn-primary mb-3"> Add Product</button>
+    </a>
+    <div class="col">
+      <h3 class="text-center mb-3">
+        All product list
+      </h3>
+
+      {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-success alert-dismissible fade show  alert-{{ message.tags }} mt-2" role="alert">
+          {{message}}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+      {% endif %}
+
+      <div class="col">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">title</th>
+              <th scope="col">description</th>
+              <th scope="col">price</th>
+              <th scope="col">category</th>
+              <th scope="col">actions</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for product in products %}
+            <tr>
+              <th scope="row">{{product.id}}</th>
+              <td>{{product.title}}</td>
+              <td>{{product.description | truncatechars:20 }}</td>
+              <td>{{product.category}}</td>
+              <td>{{product.price}}</td>
+              <td>
+                <a href="{% url 'productEdit' product.id %}" class="btn btn-sm btn-outline-warning"> edit </a>
+                <a href="{% url 'productDelete' product.id %}" class="btn btn-sm btn-outline-danger"> delete </a>
+
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

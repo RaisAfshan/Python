@@ -1,0 +1,25 @@
+{% extends 'admin/adminDashboard.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="text-center mb-4">
+                    <h2 class="h3"> Variant form </h2>
+                </div>
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="text-end mt-4">
+                                    <button type="submit" class="btn btn-primary " style="background-color:#fca311 !important; border-color:#fca311">
+                                        Add Variant
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
