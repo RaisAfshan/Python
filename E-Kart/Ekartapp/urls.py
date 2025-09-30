@@ -49,6 +49,12 @@ urlpatterns=[
 
     #Banner
     path('banner_add',admin_views.add_banner,name='add_Banner'),
-    path('banner_display',admin_views.banner_display,)
+    path('banner_display',admin_views.banner_display,name='bannerDisplay'),
+    path('banner_edit',admin_views.banner_edit,name='bannerEdit'),
+
+    # Admin home page
+    path('admin_home_page/',admin_views.admin_homepage,name='adminHomePage'),
+
+
 
 ]

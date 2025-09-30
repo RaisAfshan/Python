@@ -146,13 +146,29 @@ def admin_products_overview(request):
 def admin_user_view(request):
     return render(request,'admin/user/adminUserView.html')
 
+# Banner CRUD
 @login_required(login_url='login1')
 def add_banner(request):
     return render(request,'admin/banner/addBanner.html')
 
 @login_required(login_url='login1')
 def banner_display(request):
-    return render(request,'admin/banner/addBanner.html')
+    return render(request,'admin/banner/BannerList.html')
+
+@login_required(login_url='login1')
+def banner_edit(request):
+    return render(request,'admin/banner/BannerEdit.html')
+
+
+@login_required(login_url='login1')
+def banner_delete(request):
+    pass
+
+# Admin Home page
+@login_required(login_url='login1')
+def admin_homepage(request):
+    return render(request,'admin/AdminHomePage.html')
+
 
 
 
