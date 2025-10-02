@@ -1,5 +1,5 @@
 from django.urls import path
-from Ekartapp import views, admin_views
+from Ekartapp import views, admin_views, user_views
 
 urlpatterns=[
 
@@ -55,6 +55,9 @@ urlpatterns=[
     # Admin home page
     path('admin_home_page/',admin_views.admin_homepage,name='adminHomePage'),
 
+# User Views
+    path('user_home',user_views.user_home,name='userHome'),
+    path('user_product_home',user_views.user_productHome,name='userProductHome')
 
 
 ]

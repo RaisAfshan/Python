@@ -36,7 +36,7 @@ def loginUser(request):
         if user.is_staff:
             return redirect('adminHomePage')
         if user.is_user:
-            return redirect('index')
+            return redirect('userProductHome')
         else:
             messages.info(request,"Invalid Credentials")
     return render(request,'login.html')
