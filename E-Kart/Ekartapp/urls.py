@@ -57,7 +57,8 @@ urlpatterns=[
 
 # User Views
     path('user_home',user_views.user_home,name='userHome'),
-    path('user_product_home',user_views.user_productHome,name='userProductHome')
+    path('user_product_home',user_views.user_productHome,name='userProductHome'),
+    path('user_Cart', user_views.user_cart, name='userCart')
 
 
 ]
