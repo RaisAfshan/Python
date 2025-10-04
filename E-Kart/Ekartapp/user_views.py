@@ -1,6 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
+from Ekartapp.models import Product, Category
+
 
 @login_required(login_url='login1')
 def user_home(request):
@@ -19,10 +21,12 @@ def product_detail(request):
     return render(request,'user/productView/productDetail.html')
 
 def all_products(request):
-    return render(request,'user/products/allproducts.html')
+    products = Product.objects.filter(status=True)
+    return render(request,'user/products/allproducts.html',{'products':products})
 
 def category_product(request):
-    return render(request,'user/category/categoryProduct.html')
+    category = Category.objects.filter(status=True)
+    return render(request,'user/category/categoryProduct.html',)
 
 def sub_category_product(request):
     return render(request,'user/category/subcategory.html')
@@ -32,6 +36,8 @@ def user_profile(request):
 
 def user_address(request):
     return render(request,'user/userProfile/userAddress.html')
+
+
 
 
 
