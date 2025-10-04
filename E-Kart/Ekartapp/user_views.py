@@ -27,5 +27,12 @@ def category_product(request):
 def sub_category_product(request):
     return render(request,'user/category/subcategory.html')
 
+def user_profile(request):
+    return render(request,'user/userProfile/user_Profile.html')
+
+def user_address(request):
+    return render(request,'user/userProfile/userAddress.html')
+
+
 
 

@@ -1,0 +1,69 @@
+{% extends 'user/userHome.html' %}
+{% load static %}
+{% block content %}
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-md-10 offset-md-1">
+                <div class="card profile-card border-0">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0"> My Profile </h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            <div class="row">
+                                <div class="col-md-4 text-center mb-4">
+                                    <div class="profile-pic-wrapper">
+                                        <div class="profile-pic-container">
+                                            <img src="" class="profile-pic rounded-circle">
+                                        </div>
+                                    </div>
+                                </div>
+                                    <!--Personal info-->
+                                <div class="col-md-8">
+                                    <div class="form-section">
+                                         <div class="col-md-8">
+                                            <div class="form-section">
+                                                <h4 class="section-title">Personal Information</h4>
+
+                                                <div class="mb-3">
+                                                    <label for="name" class="form-label">Full Name</label>
+                                                    <input type="text" class="form-control" id="name" name="name" value="Tom Hardy" required readonly>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="gender" class="form-label">Gender</label>
+                                                        <input type="text" class="form-control" id="gender" name="gender" value="Male" required readonly>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="email" class="form-label">Email Address</label>
+                                                        <input type="email" class="form-control" id="email" name="email" value="tom@gmail.com" required readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="Contact_no" class="form-label">Phone Number</label>
+                                                        <input type="tel" class="form-control" id="Contact_no" name="Contact_no" value="1234534224" maxlength="10" required readonly>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="place" class="form-label">Place</label>
+                                                        <input type="text" class="form-control" id="place" name="place" value="India" required readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-end">
+                    <a href="{% url 'userAddress' %}" class="btn btn-primary">Add Address</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
