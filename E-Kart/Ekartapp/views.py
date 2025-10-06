@@ -37,9 +37,10 @@ def loginUser(request):
             return redirect('adminHomePage')
         if user.is_user:
             return redirect('userProductHome')
-        else:
-            messages.info(request,"Invalid Credentials")
+    else:
+        messages.info(request,"Invalid Credentials")
     return render(request,'login.html')
+
 
 def logout_view(request):
     logout(request)

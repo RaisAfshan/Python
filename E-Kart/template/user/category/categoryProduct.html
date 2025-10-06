@@ -1,67 +1,67 @@
 {% extends 'user/userHome.html' %}
 {% load static %}
+
 {% block content %}
-    <div class="container-fluid ">
+<div class="container-fluid">
+    <div class="row g-0">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar" style="max-height: 100vh; overflow-y: auto;">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
 
-        <div class="row g-0">
-            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar "  style="max-height: 100vh; overflow-y: auto;">
-                <div class="position-sticky pt-3"  >
-                    <ul class="nav flex-column">
 
-                    <!--category-->
-                        <li class="nav-item">
-                            <a class="nav-link dropdown-toggle" data-bs-toggle="collapse" href="#electronics" role="button">
-                                electronics
-                            </a>
-                        <!--sub category-->
-                            <div class="collapse ps-5" id="electronics">
-                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                  <li><a href="{% url 'subCategoryProduct' %}" class="link-dark rounded">Smartphones</a></li>
-                                  <li><a href="#" class="link-dark rounded">Smart TVs</a></li>
-                                  <li><a href="#" class="link-dark rounded">Laptops</a></li>
-                                </ul>
+                    {% for cat in category %}
+                        <!-- Parent Category -->
+                        <li class="nav-item ms-2">
+                            <div class="d-flex align-items-center">
+                                <!-- Main category link -->
+                                <a href="{% url 'subCategoryProduct' cat.id %}"
+                                   class=" mb-0 me-1 flex-grow-0 p-0"
+                                   style="text-decoration: none;">
+                                    {{ cat.name }}
+                                </a>
+
+                                <!-- Arrow toggle (just an icon) -->
+                                {% if cat.subcategory.all %}
+                                    <span class="bi bi-caret-down-fill text-dark"data-bs-toggle="collapse"
+                                          data-bs-target="#cat{{ cat.id }}"
+                                          aria-expanded="false"
+                                          aria-controls="cat{{ cat.id }}"
+                                          style="cursor: pointer; user-select: none;">
+
+                                    </span>
+                                {% endif %}
                             </div>
+
+                            <!-- Subcategories -->
+                            {% if cat.subcategory.all %}
+                                <div class="collapse ps-3 mt-1" id="cat{{ cat.id }}">
+                                    <ul class="list-unstyled fw-normal pb-1 small">
+                                        {% for sub in cat.subcategory.all %}
+                                            <li>
+                                                <a href="{% url 'subCategoryProduct' sub.id %}"
+                                                   class="link-dark rounded d-block py-1 ps-2 hover-bg-light">
+                                                    {{ sub.name }}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
                         </li>
 
-<!--                        <li class="nav-item">-->
-<!--                            <a class="nav-link dropdown-toggle " data-bs-toggle="collapse" href="#fashion" role="button">-->
-<!--                                fashion-->
-<!--                            </a>-->
-<!--                        &lt;!&ndash;sub category&ndash;&gt;-->
-<!--                            <div class="collapse ps-5" id="fashion">-->
-<!--                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">-->
-<!--                                  <li><a href="#" class="link-dark rounded">Men's Wear</a></li>-->
-<!--                                  <li><a href="#" class="link-dark rounded">Women's Wear</a></li>-->
-<!--                                  <li><a href="#" class="link-dark rounded">Accessories</a></li>-->
-<!--                                </ul>-->
-<!--                            </div>-->
-<!--                        </li>-->
+                    {% endfor %}
+                </ul>
+            </div>
 
-<!--                        <li class="nav-item">-->
-<!--                            <a class="nav-link dropdown-toggle " data-bs-toggle="collapse" href="#HomeAppliances" role="button">-->
-<!--                                Home Appliances-->
-<!--                            </a>-->
-<!--                        &lt;!&ndash;sub category&ndash;&gt;-->
-<!--                            <div class="collapse ps-5" id="HomeAppliances">-->
-<!--                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">-->
-<!--                                  <li><a href="#" class="link-dark rounded">Washing Machines</a></li>-->
-<!--                                  <li><a href="#" class="link-dark rounded">Refrigerators</a></li>-->
-<!--                                  <li><a href="#" class="link-dark rounded">Microwave Ovens</a></li>-->
-<!--                                </ul>-->
-<!--                            </div>-->
-<!--                        </li>-->
-                    </ul>
-                </div>
-            </nav>
+        </nav>
 
-                <main class="col-md-9 ms-sm-auto col-lg-10 ">
-                {% block sub %}
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10">
+            {% block sub %}
 
-                {% endblock %}
-
-            </main>
-
-        </div>
-
+            {% endblock %}
+        </main>
     </div>
+</div>
 {% endblock %}

@@ -41,7 +41,7 @@ class UserAddress(models.Model):
 
 class Category(models.Model):
     name= models.CharField(max_length=200)
-    parent = models.ForeignKey('self',on_delete=models.CASCADE,related_name='subcategory', null=True,blank=True)
+    parent = models.ForeignKey('self',on_delete=models.CASCADE,related_name='subcategory', null=True,blank=True) # Parent = Null : then its main category
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

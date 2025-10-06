@@ -62,7 +62,7 @@ urlpatterns=[
     path('product-detail', user_views.product_detail, name='productDetail'),
     path('all-products',user_views.all_products, name='allProducts'),
     path('category-product',user_views.category_product , name='categoryProduct'),
-    path('sub-category-product',user_views.sub_category_product , name='subCategoryProduct'),
+    path('sub-category-product/<int:id>',user_views.sub_category_product , name='subCategoryProduct'),
     path('user-profile',user_views.user_profile, name='userProfile'),
     path('user_address',user_views.user_address,name='userAddress')
 
