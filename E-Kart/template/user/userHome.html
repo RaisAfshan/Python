@@ -403,6 +403,7 @@
 <!--              <a href="index.html" class="text-uppercase mx-3"><i class="bi bi-heart"></i>-->
 <!--              </a>-->
 <!--            </li>-->
+            {% if user.is_authenticated %}
             <li class="d-none d-lg-block">
               <a href="{% url 'userCart' %}" class="text-uppercase mx-3" ><i class="bi bi-cart"></i>
               </a>
@@ -423,7 +424,7 @@
               </a>
             </li>
             <li  class="mx-2">
-              <a href="{%  url 'login1' %}" class="">
+              <a href="{%  url 'userProfile' %}" class="">
                 <i class="bi bi-person"></i>
               </a>
             </li>
@@ -433,6 +434,13 @@
                <i class="bi bi-box-arrow-right"></i>
               </a>
             </li>
+            {% else %}
+                <li  class="mx-2">
+                  <a href="{%  url 'login1' %}" class="">
+                    <i class="bi bi-person"></i>
+                  </a>
+                </li>
+            {% endif %}
           </ul>
         </div>
 

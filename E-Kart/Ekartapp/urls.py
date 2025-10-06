@@ -4,7 +4,7 @@ from Ekartapp import views, admin_views, user_views
 urlpatterns=[
 
 #Views
-    path('',views.index,name='index'),
+    # path('',views.index,name='index'),
     path('Register',views.userRegisteration, name='Register1'),
     path('login',views.loginUser,name='login1'),
     path('logout',views.logout_view,name='logout1'),
@@ -57,7 +57,7 @@ urlpatterns=[
 
 # User Views
     path('user_home',user_views.user_home,name='userHome'),
-    path('user_product_home',user_views.user_productHome,name='userProductHome'),
+    path('',user_views.user_productHome,name='userProductHome'),
     path('user_Cart', user_views.user_cart, name='userCart'),
     path('product-detail', user_views.product_detail, name='productDetail'),
     path('all-products',user_views.all_products, name='allProducts'),

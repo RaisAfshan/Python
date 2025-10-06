@@ -48,10 +48,11 @@ def sub_category_product(request,id):
         products = Product.objects.filter(category=category)
     return render(request,'user/category/subcategory.html',{'current_category':category,'products':products,'category':categories})
 
-
+@login_required(login_url='login1')
 def user_profile(request):
     return render(request,'user/userProfile/user_Profile.html')
 
+@login_required(login_url='login1')
 def user_address(request):
     return render(request,'user/userProfile/userAddress.html')
 

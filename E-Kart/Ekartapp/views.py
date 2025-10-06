@@ -28,6 +28,12 @@ def userRegisteration(request):
     return render(request,'userRegister.html',{'customReg':customReg,'userReg':userReg})
 
 def loginUser(request):
+    if request.user.is_authenticated:
+        if request.user.is_staff:
+            return redirect('adminHomePage')
+        elif request.user.is_user:
+            return redirect('userProductHome')
+
     username = request.POST.get('uname')
     password = request.POST.get('pass')
     user =authenticate(request, username=username,password=password)
@@ -44,5 +50,5 @@ def loginUser(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('index')
+    return redirect('userProductHome')
 
