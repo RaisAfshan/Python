@@ -55,27 +55,57 @@ class Product(models.Model):
     brand = models.CharField(max_length=300, null=True)
     title=models.CharField(max_length=300)
     description = models.TextField()
-    price = models.DecimalField(max_digits=10,decimal_places=2)
     status=models.BooleanField(default=True)
     category = models.ForeignKey(Category,on_delete=models.CASCADE,related_name="category_products")
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.title
 
-# class ProductVariant(models.Model):
-#     attribute = models.CharField(max_length=200,blank=True,null=True)
-#     value = models.ForeignKey('self',on_delete=models.CASCADE,related_name='product_variants')
-#     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_var')
-#
-#
-# class ProductImage(models.Model):
-#     product_image = models.ImageField(upload_to='upload/')
-#     alt_text=models.CharField(max_length=100)
-#     is_primary = models.BooleanField(default=False)
-#     product = models.ForeignKey(Product, on_delete=models.CASCADE,related_name='product_image')
-#     created_at = models.DateTimeField(auto_now_add=True)
-#
-#     class Meta:
-#         ordering= ['-is_primary','created_at']
+
+class VariantType(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+class Variants(models.Model):
+    variant_type = models.ForeignKey(VariantType,on_delete=models.CASCADE,related_name='variant_type')
+    value = models.CharField(max_length=200)
+
+
+    def __str__(self):
+        return f"{self.variant_type.name} - {self.value}"
+
+class ProductVariant(models.Model):
+    product = models.ForeignKey(Product,on_delete=models.CASCADE, related_name='product_variant')
+    primary_variant = models.ForeignKey(Variants,on_delete=models.CASCADE,related_name='primary_product_variant')
+    secondary_variant = models.ForeignKey(Variants,on_delete=models.CASCADE,related_name='secondary_product_variant',null=True,blank=True)
+    price = models.DecimalField(max_digits=10,decimal_places=3)
+    created_at = models.DateTimeField(auto_now_add=True)
+    quantity = models.PositiveIntegerField(default=0)
+    is_default = models.BooleanField(default=False)
+
+    def save(self,*args,**kwargs):
+        if self.is_default:
+            ProductVariant.objects.filter(product=self.product,is_default = True).update(is_default=False )
+        super().save(*args,**kwargs)
+
+    def __str__(self):
+        if self.secondary_variant:
+            return f"{self.product.title} - {self.primary_variant.value}/{self.secondary_variant.value}"
+        return f"{self.product.title} - {self.primary_variant.value}"
+
+class ProductVariantImage(models.Model):
+    product_variant = models.ForeignKey(ProductVariant,on_delete=models.CASCADE,related_name='images')
+    image = models.ImageField(upload_to='product')
+    is_default = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.product_variant} - Image"
+
+
+
 
 
 
