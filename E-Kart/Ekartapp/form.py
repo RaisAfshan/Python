@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
 from Ekartapp.Choices import GENDER_CHOICES
-from Ekartapp.models import Custom_User, UserModel, Category, Product
+from Ekartapp.models import Custom_User, UserModel, Category, Product, UserAddress
 
 
 class CustomUserForm(UserCreationForm):
@@ -38,6 +38,11 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ('title','description','status','category')
+
+class userAddressForm(forms.ModelForm):
+    class Meta:
+        model = UserAddress
+        fields = ('address_type','street_address','city','state','country','zip_code','is_default')
 
 
 

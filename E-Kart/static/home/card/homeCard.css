@@ -11,7 +11,7 @@
 
 .p-img{
     transition:all .5s ease;
-    height:200px;
+    height:300px;
     object-fit:cover;
 }
 

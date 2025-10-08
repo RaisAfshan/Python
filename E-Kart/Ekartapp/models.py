@@ -24,6 +24,7 @@ class UserModel(models.Model):
     profilePicture = models.FileField(upload_to='upload/')
     email = models.EmailField()
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.BooleanField(default=True)
 
     def __str__(self):
         return self.fullName
@@ -37,7 +38,7 @@ class UserAddress(models.Model):
     country = models.CharField(max_length=100,default='India')
     zip_code = models.CharField(max_length=100)
     is_default = models.BooleanField(default=False)
-    status = models.BooleanField(default=False)
+    status = models.BooleanField(default=True)
 
 class Category(models.Model):
     name= models.CharField(max_length=200)
@@ -47,22 +48,6 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-
-
-
-class Product(models.Model):
-    created_by = models.ForeignKey(Custom_User,on_delete=models.CASCADE,related_name='product')
-    brand = models.CharField(max_length=300, null=True)
-    title=models.CharField(max_length=300)
-    description = models.TextField()
-    status=models.BooleanField(default=True)
-    category = models.ForeignKey(Category,on_delete=models.CASCADE,related_name="category_products")
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.title
-
-
 class VariantType(models.Model):
     name = models.CharField(max_length=200)
 
@@ -77,6 +62,22 @@ class Variants(models.Model):
     def __str__(self):
         return f"{self.variant_type.name} - {self.value}"
 
+
+class Product(models.Model):
+    created_by = models.ForeignKey(Custom_User,on_delete=models.CASCADE,related_name='product')
+    brand = models.CharField(max_length=300, null=True)
+    title=models.CharField(max_length=300)
+    description = models.TextField()
+    primary_variant = models.ForeignKey(VariantType,on_delete=models.CASCADE,related_name='primary_variant_type')
+    secondary_variant = models.ForeignKey(VariantType,on_delete=models.CASCADE,related_name='secondary_variant_type',null=True,blank=True)
+    status=models.BooleanField(default=True)
+    category = models.ForeignKey(Category,on_delete=models.CASCADE,related_name="category_products")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+
 class ProductVariant(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE, related_name='product_variant')
     primary_variant = models.ForeignKey(Variants,on_delete=models.CASCADE,related_name='primary_product_variant')
@@ -90,6 +91,9 @@ class ProductVariant(models.Model):
         if self.is_default:
             ProductVariant.objects.filter(product=self.product,is_default = True).update(is_default=False )
         super().save(*args,**kwargs)
+
+    def get_default_image(self):
+        return self.images.filter(is_default=True).first()
 
     def __str__(self):
         if self.secondary_variant:

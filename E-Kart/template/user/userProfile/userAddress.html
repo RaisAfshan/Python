@@ -5,7 +5,7 @@
     <div class="row">
       <h4 class="fw-bolder">Your Address</h4>
       <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 d-flex justify-content-center">
-          <a href="#">
+          <a href="{% url 'postAddress' %}">
               <div class="card h-100" style="width: 18rem; border:2px dashed #ddd;">
                 <div class="text-center">
                     <img src="https://static.thenounproject.com/png/961411-200.png" class="card-img-top " alt="..." style="height:100px; width:100px">
@@ -16,14 +16,14 @@
               </div>
           </a>
       </div>
-
+    {% for ad in address %}
       <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 d-flex justify-content-center">
           <div class="card" style="width: 18rem;">
             <div class="card-body d-flex flex-column">
-              <h6 class="card-title text-dark fw-bold mb-1">Tom Hardy</h6>
-              <p class="card-text text-dark mb-1">1234 Elm Street </p>
-              <p class="card-text text-dark mb-1">Springfield, IL 62704 </p>
-              <p class="card-text text-dark mb-0">USA</p>
+              <h6 class="card-title text-dark fw-bold mb-1">{{ad.user.fullName}}</h6>
+              <p class="card-text text-dark mb-1">{{ad.street_address}} </p>
+              <p class="card-text text-dark mb-1">{{ad.city}} </p>
+              <p class="card-text text-dark mb-0">{{ad.state}}, {{ad.country}} , {{ad.zip_code}}</p>
               <div class="mt-auto">
                 <a href="#" class="card-link " style="color:blue">edit</a>
                   <span class="text-dark mx-3"> | </span>
@@ -31,25 +31,8 @@
               </div>
             </div>
           </div>
-
       </div>
-
-      <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 d-flex justify-content-center">
-          <div class="card " style="width: 18rem;">
-            <div class="card-body d-flex flex-column">
-              <h6 class="card-title text-dark fw-bold mb-1">Jane Smith</h6>
-              <p class="card-text text-dark mb-1">Apartment 56B, Greenview Towers </p>
-              <p class="card-text text-dark mb-1">Shelbyville, TN 37160   </p>
-              <p class="card-text text-dark mb-0">USA</p>
-              <div class="mt-auto">
-                <a href="#" class="card-link " style="color:blue">edit</a>
-                  <span class="text-dark mx-3"> | </span>
-                <a href="#" class="card-link" style="color:blue">delete</a>
-              </div>
-            </div>
-          </div>
-
-      </div>
+        {% endfor %}
     </div>
   </div>
 {% endblock %}

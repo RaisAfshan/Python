@@ -25,7 +25,7 @@ class AdminVariants(admin.ModelAdmin):
     list_display = ('variant_type','value')
 
 class AdminProductVariants(admin.ModelAdmin):
-    list_display = ('product','primary_variant','secondary_variant','price','quantity','is_default','created_at')
+    list_display = ('id','product','primary_variant','secondary_variant','price','quantity','is_default','created_at')
 
 class AdminProductImage(admin.ModelAdmin):
     list_display = ('product_variant','image','is_default')
