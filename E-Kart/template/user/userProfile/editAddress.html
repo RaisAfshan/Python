@@ -1,0 +1,23 @@
+{% extends 'user/userHome.html' %}
+{% load static crispy_forms_tags %}
+{% block content %}
+<div class="container">
+    <div class="row">
+            <div class=" mb-4">
+                    <h2 class="h3">Edit  Address</h2>
+            </div>
+                <div class="card " style="width:40rem">
+                    <div class="card-body ms-2">
+                        <form method="POST">
+                            {% csrf_token %}
+                            {{ editForm  | crispy }}
+                                <button type="submit" class="btn btn-primary" >
+                                        Edit address
+                                </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}

@@ -3,58 +3,65 @@ from django.shortcuts import render,redirect
 from django.contrib import messages
 from Ekartapp.form import userAddressForm
 from Ekartapp.models import Product, Category, ProductVariant, ProductVariantImage, Custom_User, UserModel, UserAddress
-
+from django.shortcuts import render, get_object_or_404
 
 def user_home(request):
     return render(request,'user/userHome.html')
 
 
 def user_productHome(request):
-    return render(request,'user/userProductHome.html')
+    basePrice = ProductVariant.objects.filter(price__lte=80000,product__category__name='Smartphones')[:4]
+    # category = ProductVariant.objects.
+    context = {
+        'basePrice': basePrice
+    }
+    return render(request,'user/userProductHome.html',context)
 
 @login_required(login_url='login1')
 def user_cart(request):
+    # cart_item = get_object_or_404(ProductVariant,id=id)
+    # print(cart_item)
+    # quantity = ProductVariant.objects.filter(id=cart_item)
     return render(request,'user/cart/userCart.html')
 
 
-# def product_detail(request,id):
-#     product = ProductVariant.objects.get(id=id)
-#     primary_values = ProductVariant.objects.filter(product=product.product).values_list('primary_variant__value',flat=True).distinct()
-#     selected_primary = request.GET.get('primary',product.primary_variant.value)
-#     filtered_variants = ProductVariant.objects.filter(product=product.product,primary_variant__value=selected_primary)
-#
-#     if product.secondary_variant:
-#         secondary_values = filtered_variants.values_list('secondary_variant__value',flat=True).distinct()
-#     else:
-#         secondary_values=[]
-#
-#     context = {
-#         'prodDetail': product,
-#         'primary_values':primary_values,
-#         'secondary_values':secondary_values,
-#         'selected_primary':selected_primary
-#     }
-#     return render(request,'user/productView/productDetail.html',context)
 
 
-def product_detail(request,id):
-    product = ProductVariant.objects.get(id=id)
-    primary_values = ProductVariant.objects.filter(product=product.product).values_list('primary_variant__value',flat=True).distinct()
-    selected_primary = request.GET.get('primary',product.primary_variant.value)
-    filtered_variants = ProductVariant.objects.filter(product=product.product,primary_variant__value=selected_primary)
 
-    if product.secondary_variant:
-        secondary_values = filtered_variants.values_list('secondary_variant__value',flat=True).distinct()
+
+def product_detail(request, id):
+    product_variant = get_object_or_404(ProductVariant, id=id)
+    product = product_variant.product
+
+    primary_values = ProductVariant.objects.filter(
+        product=product
+    ).values_list('primary_variant__value', flat=True).distinct()
+
+    selected_primary = request.GET.get('primary', product_variant.primary_variant.value)
+    selected_secondary = request.GET.get('secondary', None)
+
+    filtered_variants = ProductVariant.objects.filter(
+        product=product,
+        primary_variant__value=selected_primary
+    )
+
+    secondary_values = filtered_variants.values_list('secondary_variant__value', flat=True).distinct()
+
+    if selected_secondary:
+        current_variant = filtered_variants.filter(secondary_variant__value=selected_secondary).first()
     else:
-        secondary_values=[]
+        current_variant = filtered_variants.first()
 
     context = {
-        'prodDetail': product,
-        'primary_values':primary_values,
-        'secondary_values':secondary_values,
-        'selected_primary':selected_primary
+        'prodDetail': current_variant or product_variant,
+        'primary_values': primary_values,
+        'secondary_values': secondary_values,
+        'selected_primary': selected_primary,
+        'selected_secondary': selected_secondary,
     }
-    return render(request,'user/productView/productDetail.html',context)
+
+    return render(request, 'user/productView/productDetail.html', context)
+
 
 # All products
 def all_products(request):
@@ -84,12 +91,15 @@ def sub_category_product(request,id):
 
 @login_required(login_url='login1')
 def user_profile(request):
-    return render(request,'user/userProfile/user_Profile.html')
+    user = UserModel.objects.filter(user=request.user).first()
+    address = UserAddress.objects.filter(user=user).first()
+    return render(request,'user/userProfile/user_Profile.html',{'user':user,'address':address})
 
+# Address CRUD
 @login_required(login_url='login1')
 def user_address(request):
     u = UserModel.objects.get(user=request.user)
-    address = UserAddress.objects.filter(status=False , user=u)
+    address = UserAddress.objects.filter(status=True , user=u)
     return render(request,'user/userProfile/userAddress.html',{'address':address})
 
 @login_required(login_url='login1')
@@ -107,6 +117,27 @@ def user_postAddress(request):
         else:
             messages.error(request, 'error adding address')
     return render(request,'user/userProfile/postAddress.html',{'addressForm':addressForm})
+
+@login_required(login_url='login1')
+def updateAddress(request,id):
+    edit_address = UserAddress.objects.get(id=id)
+    if request.method== 'POST':
+       editForm = userAddressForm(request.POST,instance=edit_address)
+       if editForm.is_valid():
+           editForm.save()
+           return redirect('userAddress')
+    else:
+        editForm = userAddressForm(instance=edit_address)
+    return render(request,'user/userProfile/editAddress.html',{'editForm':editForm})
+
+@login_required(login_url='login1')
+def deleteAddress(request,id):
+    delete_address = UserAddress.objects.get(id=id)
+    delete_address.status = False
+    delete_address.save()
+    return redirect('userAddress')
+
+
 
 
 

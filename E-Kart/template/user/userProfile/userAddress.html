@@ -25,9 +25,9 @@
               <p class="card-text text-dark mb-1">{{ad.city}} </p>
               <p class="card-text text-dark mb-0">{{ad.state}}, {{ad.country}} , {{ad.zip_code}}</p>
               <div class="mt-auto">
-                <a href="#" class="card-link " style="color:blue">edit</a>
+                <a href="{% url 'userAddressEdit' ad.id %}" class="card-link " style="color:blue">Edit</a>
                   <span class="text-dark mx-3"> | </span>
-                <a href="#" class="card-link" style="color:blue">delete</a>
+                <a href="{% url 'userDeleteAddress' ad.id %}" class="card-link" style="color:blue">Delete</a>
               </div>
             </div>
           </div>

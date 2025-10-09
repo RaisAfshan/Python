@@ -70,7 +70,9 @@ urlpatterns=[
 
     # Address
     path('user_address',user_views.user_address,name='userAddress'),
-    path('user_address_post',user_views.user_postAddress,name='postAddress')
+    path('user_address_post',user_views.user_postAddress,name='postAddress'),
+    path('user-address-edit/<int:id>',user_views.updateAddress, name='userAddressEdit'),
+    path('user-address-delete/<int:id>',user_views.deleteAddress,name='userDeleteAddress')
 
 
 ]

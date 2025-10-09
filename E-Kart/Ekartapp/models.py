@@ -3,7 +3,7 @@ from tkinter.constants import CASCADE
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import TextField
-
+from django.utils import timezone
 from Ekartapp.Choices import GENDER_CHOICES, ADDRESS_TYPE_CHOICES
 
 
@@ -107,6 +107,50 @@ class ProductVariantImage(models.Model):
 
     def __str__(self):
         return f"{self.product_variant} - Image"
+
+# class Coupons(models.Model):
+#     code = models.CharField(max_length=50)
+#     discount_amount = models.DecimalField(max_digits=10,decimal_places=2)
+#     discount_percent = models.PositiveIntegerField(null=True,blank=True)
+#     expiry_date = models.DateTimeField()
+#     is_active = models.BooleanField(default=True)
+#     status = models.BooleanField(default=True)
+#
+#     def __str__(self):
+#         return self.code
+#
+#     def is_valid(self):
+#         return self.is_active and self.expiry_date >= timezone.now()
+#
+# class Cart(models.Model):
+#     user = models.ForeignKey(UserModel,on_delete=models.CASCADE, related_name="cart" )
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+#     coupons = models.ForeignKey(Coupons,null=True,blank=True,on_delete=models.SET_NULL)
+#
+#     @property
+#     def total_price(self):
+#         total = sum(item.total_price for item in self.items.all())
+#         if self.coupons and self.coupons.is_valid():
+#             if self.coupons.discount_amount:
+#                 total -= self.coupons.discount_amount
+#             elif self.coupons.discount_percent:
+#                 total -= total * self.coupons.dicount_percent / 100
+#         return  max(total, 0)
+#
+# class CartItem(models.Model):
+#     cart = models.ForeignKey(Cart,on_delete=models.CASCADE,related_name='items')
+#     product_variant = models.ForeignKey(ProductVariant,on_delete=models.CASCADE,related_name='cart_product')
+#     quantity = models.PositiveIntegerField(default=1)
+#
+#     @property
+#     def total_price(self):
+#         return self.product_variant.price * self.quantity
+
+
+
+
+
 
 
 

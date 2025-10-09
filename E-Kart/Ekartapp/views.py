@@ -29,9 +29,7 @@ def userRegisteration(request):
 
 def loginUser(request):
     if request.user.is_authenticated:
-        if request.user.is_staff:
-            return redirect('adminHomePage')
-        elif request.user.is_user:
+        if request.user.is_user:
             return redirect('userProductHome')
 
     username = request.POST.get('uname')

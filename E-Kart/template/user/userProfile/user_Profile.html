@@ -27,28 +27,28 @@
 
                                                 <div class="mb-3">
                                                     <label for="name" class="form-label">Full Name</label>
-                                                    <input type="text" class="form-control" id="name" name="name" value="Tom Hardy" required readonly>
+                                                    <input type="text" class="form-control" id="name" name="name" value="{{user.fullName}}" required readonly>
                                                 </div>
 
                                                 <div class="row">
                                                     <div class="col-md-6 mb-3">
                                                         <label for="gender" class="form-label">Gender</label>
-                                                        <input type="text" class="form-control" id="gender" name="gender" value="Male" required readonly>
+                                                        <input type="text" class="form-control" id="gender" name="gender" value="{{user.gender}}" required readonly>
                                                     </div>
                                                     <div class="col-md-6 mb-3">
                                                         <label for="email" class="form-label">Email Address</label>
-                                                        <input type="email" class="form-control" id="email" name="email" value="tom@gmail.com" required readonly>
+                                                        <input type="email" class="form-control" id="email" name="email" value="{{user.email}}" required readonly>
                                                     </div>
                                                 </div>
 
                                                 <div class="row">
                                                     <div class="col-md-6 mb-3">
                                                         <label for="Contact_no" class="form-label">Phone Number</label>
-                                                        <input type="tel" class="form-control" id="Contact_no" name="Contact_no" value="1234534224" maxlength="10" required readonly>
+                                                        <input type="tel" class="form-control" id="Contact_no" name="Contact_no" value="{{user.phoneNumber}}" maxlength="10" required readonly>
                                                     </div>
                                                     <div class="col-md-6 mb-3">
                                                         <label for="place" class="form-label">Place</label>
-                                                        <input type="text" class="form-control" id="place" name="place" value="India" required readonly>
+                                                        <input type="text" class="form-control" id="place" name="place" value="{{address.country}}" required readonly>
                                                     </div>
                                                 </div>
                                             </div>
