@@ -58,7 +58,13 @@ urlpatterns=[
 # User Views
     path('user_home',user_views.user_home,name='userHome'),
     path('',user_views.user_productHome,name='userProductHome'),
+
+    # Cart
     path('user_Cart', user_views.user_cart, name='userCart'),
+    path('add-to-cart/<int:id>',user_views.add_to_cart,name='addToCart'),
+    path('user-Coupons',user_views.couponsUser,name='userCoupons'),
+    path('cart-update/<int:id> <str:action>',user_views.update_cart_quantity,name='update_cart_quantity'),
+    path('apply-coupon',user_views.apply_coupon,name='applyCoupon'),
 
     # Product detail
     path('product-detail/<int:id>', user_views.product_detail, name='productDetail'),

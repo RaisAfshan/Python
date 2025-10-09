@@ -1,9 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,redirect
+from decimal import Decimal
 from django.contrib import messages
 from Ekartapp.form import userAddressForm
-from Ekartapp.models import Product, Category, ProductVariant, ProductVariantImage, Custom_User, UserModel, UserAddress
+from Ekartapp.models import Product, Category, ProductVariant, ProductVariantImage, Custom_User, UserModel, UserAddress, \
+    Coupons, Cart, CartItem
 from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
 
 def user_home(request):
     return render(request,'user/userHome.html')
@@ -19,15 +22,109 @@ def user_productHome(request):
 
 @login_required(login_url='login1')
 def user_cart(request):
-    # cart_item = get_object_or_404(ProductVariant,id=id)
-    # print(cart_item)
-    # quantity = ProductVariant.objects.filter(id=cart_item)
-    return render(request,'user/cart/userCart.html')
+    if not request.user.is_authenticated:
+        messages.warning(request,'please log in to add items to the cart. ')
+        return redirect('login1')
+    user = UserModel.objects.get(user=request.user)
+    cart = Cart.objects.filter(user=user).first()
+    if not cart:
+        cart = Cart.objects.create(user=user)
+    items = cart.items.all() #  gets all CartItem objects belonging to this Cart
+
+    subtotal = sum(item.total_price for item in items)
+    gst = subtotal * Decimal('0.18')
+    delivery_charge = Decimal('40.00')
+    coupon_discount = Decimal('0.00')
+
+    if cart.coupons and cart.coupons.is_valid:
+        if cart.coupons.discount_amount:
+            coupon_discount = Decimal(cart.coupons.discount_amount)
+        elif cart.coupons.discount_percent:
+            coupon_discount = Decimal(subtotal) * Decimal(cart.coupons.discount_percent) / Decimal(100)
+
+    total_price = subtotal+gst+delivery_charge-coupon_discount
+
+    context = {
+        'cart':cart,
+        'items':items,
+        'total_price':total_price,
+        'subtotal':subtotal,
+        'gst':gst,
+        'delivery_charge':delivery_charge,
+        'coupon_discount':coupon_discount
+
+    }
+
+    return render(request,'user/cart/userCart.html',context)
+
+@login_required(login_url='login1')
+def update_cart_quantity(request,id,action):
+    cart_item = get_object_or_404(CartItem,id=id,cart__user__user=request.user)
+
+    if action == 'increase':
+        if cart_item.product_variant.quantity > 0:
+            cart_item.quantity += 1
+            cart_item.save()
+        else:
+            messages.warning(request,"no more stock available")
+    elif action == 'decrease':
+        if cart_item.quantity>1:
+            cart_item.quantity -= 1
+            cart_item.save()
+        else:
+            cart_item.delete()
+            messages.warning(request,"item is removed from cart")
+    return  redirect('userCart')
+
+
+@login_required(login_url='login1')
+def add_to_cart(request,id):
+    if not request.user.is_authenticated:
+        messages.warning(request,"please log in to add items to the cart. ")
+        return redirect('login1')
+    product_variant = get_object_or_404(ProductVariant,id=id)
+
+    if product_variant.quantity<=0:
+        messages.error(request,"the item you r selected is out of stock")
+
+    user = UserModel.objects.filter(user=request.user).first()
+    cart = Cart.objects.filter(user=user).first()
+    if not cart:
+        cart = Cart.objects.create(user=request.user)
+
+    cart_items = CartItem.objects.filter(cart=cart,product_variant=product_variant).first()
+    if cart_items:
+        cart_items.quantity += 1
+        cart_items.save()
+    else:
+        CartItem.objects.create(cart=cart,product_variant=product_variant,quantity=1)
+
+    messages.success(request,"Product added to cart!")
+    return redirect('userCart')
+
+@login_required(login_url='login1')
+def apply_coupon(request):
+    if request.method == 'POST':
+        code = request.POST.get("coupon_code","").strip()
+        user = UserModel.objects.get(user=request.user)
+        cart, _ = Cart.objects.get_or_create(user=user)
+
+        coupon = Coupons.objects.get(code=code)
+        if coupon.is_valid():
+            cart.coupons = coupon
+            cart.save()
+            messages.success(request,f"coupon {coupon.code} coupon is applied succefully")
+        else:
+            messages.warning(request,f"coupon {coupon.code} coupon is expired")
+
+    return redirect('userCart')
 
 
 
-
-
+@login_required(login_url='login1')
+def couponsUser(request):
+    coupons = Coupons.objects.filter(status = True,is_active=True, expiry_date__gte = timezone.now())
+    return render(request,'user/cart/all_coupons.html',{'coupons':coupons})
 
 def product_detail(request, id):
     product_variant = get_object_or_404(ProductVariant, id=id)

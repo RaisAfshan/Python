@@ -1,0 +1,37 @@
+{% extends 'user/userHome.html' %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <h2>Coupon List</h2>
+                <div class="col">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col" class="text-dark">code</th>
+                          <th scope="col" class="text-dark">discount</th>
+                          <th scope="col" class="text-dark">expiry_date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% for coupon in coupons %}
+                      {% if coupon %}
+                        <tr>
+                          <td>{{coupon.code}}</td>
+                           {% if coupon.discount_amount %}
+                            <td>{{coupon.discount_amount}}</td>
+                            {% elif coupon.discount_percent %}
+                             <td>{{coupon.discount_percent}}</td>
+                            {% endif %}
+                          <td>{{coupon.expiry_date}}</td>
+                        </tr>
+                      {% else %}
+                        <p> No coupons available </p>
+                      {% endif %}
+                      {%  endfor %}
+                      </tbody>
+                    </table>
+                </div>
+        </div>
+    </div>
+{% endblock %}
