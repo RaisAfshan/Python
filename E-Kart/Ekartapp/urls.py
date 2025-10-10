@@ -78,7 +78,13 @@ urlpatterns=[
     path('user_address',user_views.user_address,name='userAddress'),
     path('user_address_post',user_views.user_postAddress,name='postAddress'),
     path('user-address-edit/<int:id>',user_views.updateAddress, name='userAddressEdit'),
-    path('user-address-delete/<int:id>',user_views.deleteAddress,name='userDeleteAddress')
+    path('user-address-delete/<int:id>',user_views.deleteAddress,name='userDeleteAddress'),
+
+    #Order
+    path('user-Checkout',user_views.checkout_view,name='userCheckout'),
+    path('user-proceedOrder',user_views.proceed_order_view,name='proceedOrder'),
+    path('order-success/<int:id>',user_views.order_success_view,name='orderSuccess'),
+
 
 
 ]

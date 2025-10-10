@@ -4,7 +4,7 @@ from decimal import Decimal
 from django.contrib import messages
 from Ekartapp.form import userAddressForm
 from Ekartapp.models import Product, Category, ProductVariant, ProductVariantImage, Custom_User, UserModel, UserAddress, \
-    Coupons, Cart, CartItem
+    Coupons, Cart, CartItem, Order, OrderItem
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 
@@ -14,9 +14,12 @@ def user_home(request):
 
 def user_productHome(request):
     basePrice = ProductVariant.objects.filter(price__lte=80000,product__category__name='Smartphones')[:4]
-    # category = ProductVariant.objects.
+    category = Category.objects.get(name="Fashion",parent__isnull=True)
+    catproduct = ProductVariant.objects.filter(product__category=category,is_default=True)[:4]
+    print(category)
     context = {
-        'basePrice': basePrice
+        'basePrice': basePrice,
+        'catproduct':catproduct
     }
     return render(request,'user/userProductHome.html',context)
 
@@ -183,7 +186,7 @@ def sub_category_product(request,id):
         else:
             products = ProductVariant.objects.filter(product__category=category,is_default=True).prefetch_related('images')
     else:
-        products = Product.objects.filter(category=category,is_default=True).prefetch_related('images')
+        products = ProductVariant.objects.filter(product__category=category,is_default=True).prefetch_related('images')
     return render(request,'user/category/subcategory.html',{'current_category':category,'products':products,'category':categories})
 
 @login_required(login_url='login1')
@@ -233,6 +236,76 @@ def deleteAddress(request,id):
     delete_address.status = False
     delete_address.save()
     return redirect('userAddress')
+
+# Order Placed
+@login_required(login_url='login1')
+def checkout_view(request):
+    user = UserModel.objects.filter(user=request.user).first()
+    cart = get_object_or_404(Cart, user=user)
+    items = cart.items.all()
+    address = UserAddress.objects.filter(user=user, is_default=True).first()
+
+    if not address:
+        messages.error(request, "Please add a default address before checkout.")
+        return redirect('userAddress')
+
+    total = cart.total_price
+
+    context = {
+        'cart': cart,
+        'items': items,
+        'address': address,
+        'total': total
+    }
+
+    return render(request, 'user/order/checkout.html', context)
+
+@login_required(login_url='login1')
+def proceed_order_view(request):
+    user = UserModel.objects.filter(user=request.user).first()
+    cart = get_object_or_404(Cart,user=user)
+    items = cart.items.all()
+
+    if not items.exists():
+        messages.warning(request,"your cart is empty")
+        return redirect('userCart')
+
+    address = UserAddress.objects.filter(user=user,is_default=True).first()
+    if not address:
+        messages.error(request,"Please set a default shipping address  before placing an order.")
+        return redirect('userAddress')
+    total_price = cart.total_price
+
+    order = Order.objects.create(user=user,total_price=total_price,address=address)
+
+    for item in items:
+        variant=item.product_variant
+
+        if variant.quantity < item.quantity:
+            messages.error(request,f"Insufficient stock only {variant.quantity} left")
+            order.delete()
+            return redirect('userCart')
+
+        orderItem = OrderItem.objects.create(order=order,product_variant=variant,quantity=item.quantity,price=variant.price)
+
+        variant.quantity -= item.quantity
+        variant.save()
+
+    items.delete()
+    cart.coupons = None
+    cart.save()
+    messages.success(request, f"Your order #{order.id} has been placed successfully!")
+    return redirect('orderSuccess',id=order.id)
+
+@login_required(login_url='login1')
+def order_success_view(request,id):
+    order = get_object_or_404(Order,id=id)
+    return render(request,'user/order/orderSuccess.html',{'order':order})
+
+@login_required(login_url='login1')
+def order_status(request):
+    pass
+
 
 
 

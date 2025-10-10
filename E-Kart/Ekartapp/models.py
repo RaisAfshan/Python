@@ -4,7 +4,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import TextField
 from django.utils import timezone
-from Ekartapp.Choices import GENDER_CHOICES, ADDRESS_TYPE_CHOICES
+from Ekartapp.Choices import GENDER_CHOICES, ADDRESS_TYPE_CHOICES, ORDER_STATUS
+from decimal import Decimal
 
 
 # Create your models here.
@@ -130,13 +131,17 @@ class Cart(models.Model):
 
     @property
     def total_price(self):
-        total = sum(item.total_price for item in self.items.all())
+        subtotal = sum(item.total_price for item in self.items.all())
+        gst = subtotal * Decimal('0.18')
+        delivery = Decimal('40.0')
+        discount = Decimal(0.00)
+
         if self.coupons and self.coupons.is_valid():
             if self.coupons.discount_amount:
-                total -= self.coupons.discount_amount
+                discount = Decimal(self.coupons.discount_amount)
             elif self.coupons.discount_percent:
-                total -= total * self.coupons.discount_percent / 100
-        return  max(total, 0)
+                discount = subtotal * Decimal(self.coupons.discount_percent) / Decimal(100)
+        return subtotal + gst + delivery - discount
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart,on_delete=models.CASCADE,related_name='items')
@@ -146,6 +151,23 @@ class CartItem(models.Model):
     @property
     def total_price(self):
         return self.product_variant.price * self.quantity
+
+class Order(models.Model):
+    user = models.ForeignKey(UserModel,on_delete=models.CASCADE,related_name='user_order')
+    total_price = models.DecimalField(max_digits=10,decimal_places=2)
+    address = models.ForeignKey('UserAddress', on_delete=models.SET_NULL, null=True, blank=True)
+    status = models.CharField(max_length=10,choices=ORDER_STATUS,default='PLACED')
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_seen = models.BooleanField(default=True)
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order,on_delete=models.CASCADE,related_name='items')
+    product_variant = models.ForeignKey(ProductVariant,on_delete=models.CASCADE,related_name='prod_order')
+    quantity = models.PositiveIntegerField(default=1)
+    price = models.DecimalField(max_digits=10,decimal_places=2)
+
+    def get_subtotal(self):
+        return self.quantity * self.price
 
 
 
