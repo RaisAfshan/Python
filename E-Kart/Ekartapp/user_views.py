@@ -4,7 +4,7 @@ from decimal import Decimal
 from django.contrib import messages
 from Ekartapp.form import userAddressForm
 from Ekartapp.models import Product, Category, ProductVariant, ProductVariantImage, Custom_User, UserModel, UserAddress, \
-    Coupons, Cart, CartItem, Order, OrderItem
+    Coupons, Cart, CartItem, Order, OrderItem, CarouselImage
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 
@@ -16,9 +16,11 @@ def user_productHome(request):
     basePrice = ProductVariant.objects.filter(price__lte=80000,product__category__name='Smartphones')[:4]
     category = Category.objects.get(name="Fashion",parent__isnull=True)
     catproduct = ProductVariant.objects.filter(product__category=category,is_default=True)[:4]
+    carousel = CarouselImage.objects.filter(is_active=True).order_by('-created_at')
     print(category)
     context = {
         'basePrice': basePrice,
+        'carousel':carousel,
         'catproduct':catproduct
     }
     return render(request,'user/userProductHome.html',context)
@@ -307,6 +309,8 @@ def order_status(request):
     user = UserModel.objects.filter(user=request.user).first()
     orders =Order.objects.filter(user=user).order_by('created_at')
     return render(request,'user/order/orderStatus.html',{'orders':orders})
+
+
 
 
 

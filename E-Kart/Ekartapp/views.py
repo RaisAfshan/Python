@@ -37,6 +37,9 @@ def loginUser(request):
     user =authenticate(request, username=username,password=password)
     if user is not None:
         login(request,user)
+        next_url = request.GET.get('next')
+        if next_url:
+            return redirect(next_url)
         if user.is_staff:
             return redirect('adminHomePage')
         if user.is_user:

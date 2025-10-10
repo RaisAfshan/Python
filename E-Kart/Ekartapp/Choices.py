@@ -13,8 +13,8 @@ ADDRESS_TYPE_CHOICES = [
     ]
 
 ORDER_STATUS = (
-    ('PLACED', 'Order Placed'),
-    ('READY', 'Shipment Ready'),
-    ('DELIVERED', 'Order Delivered'),
+    ('Order Placed', 'Order Placed'),
+    ('Shipment Ready', 'Shipment Ready'),
+    ('Order Delivered', 'Order Delivered'),
 )
 

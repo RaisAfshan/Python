@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from Ekartapp.models import Custom_User, UserModel, Category, Product, VariantType, Variants, ProductVariant, \
-    ProductVariantImage, UserAddress, Coupons
+    ProductVariantImage, UserAddress, Coupons, CarouselImage, Order, OrderItem
 
 
 # Register your models here.
@@ -36,6 +36,15 @@ class AdminUserAddress(admin.ModelAdmin):
 class AdminCoupons(admin.ModelAdmin):
     list_display = ('code','discount_amount','discount_percent','expiry_date','is_active','status')
 
+class AdminCarouselImage(admin.ModelAdmin):
+    list_display = ('title','image','is_active')
+
+class AdminOrder(admin.ModelAdmin):
+    list_display = ('user','total_price','address','status','is_seen')
+
+class AdminOrderItem(admin.ModelAdmin):
+    list_display = ('order','product_variant','quantity','price')
+
 admin.site.register(Custom_User)
 admin.site.register(UserModel,AdminUser)
 admin.site.register(Category,AdminCategory)
@@ -46,3 +55,6 @@ admin.site.register(ProductVariant,AdminProductVariants)
 admin.site.register(ProductVariantImage,AdminProductImage)
 admin.site.register(UserAddress,AdminUserAddress)
 admin.site.register(Coupons,AdminCoupons)
+admin.site.register(CarouselImage,AdminCarouselImage)
+admin.site.register(Order,AdminOrder),
+admin.site.register(OrderItem,AdminOrderItem)

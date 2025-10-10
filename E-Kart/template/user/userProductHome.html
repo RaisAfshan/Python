@@ -4,24 +4,24 @@
 
      <div id="carouselExample" class="carousel slide">
   <div class="carousel-inner">
-    <div class="carousel-item active">
-      <img src="https://cdn.prod.website-files.com/605826c62e8de87de744596e/618e5e4a383af7f5357ac553_1%20Blog%20Covers%20eCommerce%20image%20carousels-%20The%20good%2C%20the%20bad%2C%20and%20the%20ugly.jpg" class="d-block w-100 carousel-img" alt="...">
+    {% for image in carousel %}
+    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+      <img src="{{image.image.url}}" class="d-block w-100 carousel-img" alt="...">
     </div>
-    <div class="carousel-item">
-      <img src="https://cdn.smartslider3.com/wp-content/uploads/2018/11/WordPresscarousel-780x410.png" class="d-block w-100 carousel-img" alt="...">
-    </div>
-    <div class="carousel-item">
-      <img src="https://img.freepik.com/free-photo/image-happy-young-woman-carry-lots-shopping-bags-buying-things-spring-discounts-standing-blue-background_1258-300694.jpg?t=st=1759331092~exp=1759334692~hmac=52379b736e37b4b62b55a455ff6c788b1f8a2b0a8e660b950212405e512f6da3&w=2000" class="d-block w-100 carousel-img" alt="...">
-    </div>
+    {% endfor %}
   </div>
-  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+       {% for image in carousel %}
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="{{ forloop.counter0 }}" >
+    <span class="carousel-control-prev-icon" {% if forloop.first %} aria-hidden="true {{forloop.counter}}" {% endif%}></span>
     <span class="visually-hidden">Previous</span>
   </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+       {% endfor %}
+        {% for image in carousel %}
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="{{ forloop.counter0 }}">
+    <span class="carousel-control-next-icon"  {% if forloop.first %} aria-hidden="true {{forloop.counter}}" {% endif%}></span>
     <span class="visually-hidden">Next</span>
   </button>
+        {% endfor %}
 </div>
 
   <section class="features py-5">

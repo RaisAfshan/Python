@@ -17,11 +17,11 @@
                         </div>
                         <div class="text-dark">
                             <strong>Status:</strong>
-                            {% if order.status == 'PLACED' %}
+                            {% if order.status == 'Order Placed' %}
                                 <span class="badge bg-primary " style="background-color:blue !important">{{ order.status }}</span>
-                            {% elif order.status == 'SHIPMENT_READY' %}
+                            {% elif order.status == 'Shipment Ready' %}
                                 <span class="badge bg-warning text-dark"  style="background-color:yellow !important">{{ order.status }}</span>
-                            {% elif order.status == 'DELIVERED' %}
+                            {% elif order.status == 'Order Delivered' %}
                                 <span class="badge bg-success" style="background-color:green !important">{{ order.status }}</span>
                             {% endif %}
                         </div>
