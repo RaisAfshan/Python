@@ -84,6 +84,8 @@ urlpatterns=[
     path('user-Checkout',user_views.checkout_view,name='userCheckout'),
     path('user-proceedOrder',user_views.proceed_order_view,name='proceedOrder'),
     path('order-success/<int:id>',user_views.order_success_view,name='orderSuccess'),
+    path('user-order-status-view',user_views.order_status,name='orderStatus')
+
 
 
 

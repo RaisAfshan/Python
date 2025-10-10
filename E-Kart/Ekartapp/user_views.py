@@ -304,7 +304,9 @@ def order_success_view(request,id):
 
 @login_required(login_url='login1')
 def order_status(request):
-    pass
+    user = UserModel.objects.filter(user=request.user).first()
+    orders =Order.objects.filter(user=user).order_by('created_at')
+    return render(request,'user/order/orderStatus.html',{'orders':orders})
 
 
 

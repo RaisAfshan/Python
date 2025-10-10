@@ -1,0 +1,56 @@
+
+{% extends 'user/userHome.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <h3 class="mb-4">My Orders</h3>
+
+    {% if orders %}
+        <div class="list-group ">
+            {% for order in orders %}
+                <div class="list-group-item mb-3 shadow rounded-3">
+                    <div class="d-flex justify-content-between p-3">
+                        <div class="text-dark">
+                            <strong class="text-dark">Order ID:</strong> {{ order.id }}<br>
+                            <strong>Placed on:</strong> {{ order.created_at|date:"d M Y H:i" }}
+                        </div>
+                        <div class="text-dark">
+                            <strong>Status:</strong>
+                            {% if order.status == 'PLACED' %}
+                                <span class="badge bg-primary " style="background-color:blue !important">{{ order.status }}</span>
+                            {% elif order.status == 'SHIPMENT_READY' %}
+                                <span class="badge bg-warning text-dark"  style="background-color:yellow !important">{{ order.status }}</span>
+                            {% elif order.status == 'DELIVERED' %}
+                                <span class="badge bg-success" style="background-color:green !important">{{ order.status }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <ul class="list-group list-group-flush p-3 text-dark">
+                        {% for item in order.items.all %}
+                            <li class="list-group-item d-flex justify-content-between text-dark">
+                                {{ item.product_variant.product.title }}
+                                - {{ item.product_variant.primary_variant.value }}
+                                {% if item.product_variant.secondary_variant %}
+                                    / {{ item.product_variant.secondary_variant.value }}
+                                {% endif %}
+                                <span class="text-dark">₹{{ item.price }} x {{ item.quantity }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <div class="mt-2 text-end fw-bold text-dark">
+                        Total: ₹{{ order.total_price }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You have no orders yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
+

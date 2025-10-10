@@ -392,6 +392,11 @@
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'categoryProduct' %}">Category</a>
                 </li>
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'orderStatus' %}">My orders</a>
+                </li>
+                {% endif %}
               </ul>
             </div>
           </div>
@@ -406,21 +411,6 @@
             {% if user.is_authenticated %}
             <li class="d-none d-lg-block">
               <a href="{% url 'userCart' %}" class="text-uppercase mx-3" ><i class="bi bi-cart"></i>
-              </a>
-            </li>
-            <li class="d-lg-none">
-              <a href="#" class="mx-2">
-                <svg width="24" height="24" viewBox="0 0 24 24">
-                  <use xlink:href="#heart"></use>
-                </svg>
-              </a>
-            </li>
-            <li class="d-lg-none">
-              <a href="#" class="mx-2" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart"
-                aria-controls="offcanvasCart">
-                <svg width="24" height="24" viewBox="0 0 24 24">
-                  <use xlink:href="#cart"></use>
-                </svg>
               </a>
             </li>
             <li  class="mx-2">
