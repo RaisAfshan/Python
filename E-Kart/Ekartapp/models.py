@@ -155,7 +155,7 @@ class CartItem(models.Model):
 class Order(models.Model):
     user = models.ForeignKey(UserModel,on_delete=models.CASCADE,related_name='user_order')
     total_price = models.DecimalField(max_digits=10,decimal_places=2)
-    address = models.ForeignKey('UserAddress', on_delete=models.SET_NULL, null=True, blank=True)
+    address = models.TextField()
     status = models.CharField(max_length=20,choices=ORDER_STATUS,default='Order Placed')
     created_at = models.DateTimeField(auto_now_add=True)
     is_seen = models.BooleanField(default=True)

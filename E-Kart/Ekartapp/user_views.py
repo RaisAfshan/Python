@@ -7,6 +7,9 @@ from Ekartapp.models import Product, Category, ProductVariant, ProductVariantIma
     Coupons, Cart, CartItem, Order, OrderItem, CarouselImage
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
+from django.db.models import Q
+from Ekartapp.userFilter import Product_Filter
+
 
 def user_home(request):
     return render(request,'user/userHome.html')
@@ -14,14 +17,23 @@ def user_home(request):
 
 def user_productHome(request):
     basePrice = ProductVariant.objects.filter(price__lte=80000,product__category__name='Smartphones')[:4]
-    category = Category.objects.get(name="Fashion",parent__isnull=True)
-    catproduct = ProductVariant.objects.filter(product__category=category,is_default=True)[:4]
+
+    main_category = Category.objects.get(name="Fashion", parent__isnull=True)
+    subcategories = main_category.subcategory.all()
+    products = ProductVariant.objects.filter(
+        Q(product__category=main_category) | Q(product__category__in=subcategories),
+        is_default=True
+    )
+
     carousel = CarouselImage.objects.filter(is_active=True).order_by('-created_at')
-    print(category)
+
+    recent_products = ProductVariant.objects.filter(is_default=True).order_by('-created_at')[:4]
+
     context = {
         'basePrice': basePrice,
         'carousel':carousel,
-        'catproduct':catproduct
+        'catproduct':products,
+        'recent_products':recent_products,
     }
     return render(request,'user/userProductHome.html',context)
 
@@ -34,7 +46,7 @@ def user_cart(request):
     cart = Cart.objects.filter(user=user).first()
     if not cart:
         cart = Cart.objects.create(user=user)
-    items = cart.items.all() #  gets all CartItem objects belonging to this Cart
+    items = cart.items.all()
 
     subtotal = sum(item.total_price for item in items)
     gst = subtotal * Decimal('0.18')
@@ -81,31 +93,36 @@ def update_cart_quantity(request,id,action):
             messages.warning(request,"item is removed from cart")
     return  redirect('userCart')
 
-
 @login_required(login_url='login1')
-def add_to_cart(request,id):
-    if not request.user.is_authenticated:
-        messages.warning(request,"please log in to add items to the cart. ")
+def add_to_cart(request, id):
+    product_variant = get_object_or_404(ProductVariant, id=id)
+
+    if product_variant.quantity <= 0:
+        messages.error(request, "The item you selected is out of stock")
+        return redirect('userCart')
+
+    user_model = UserModel.objects.filter(user=request.user).first()
+    if not user_model:
+        messages.error(request, "User not found")
         return redirect('login1')
-    product_variant = get_object_or_404(ProductVariant,id=id)
 
-    if product_variant.quantity<=0:
-        messages.error(request,"the item you r selected is out of stock")
 
-    user = UserModel.objects.filter(user=request.user).first()
-    cart = Cart.objects.filter(user=user).first()
-    if not cart:
-        cart = Cart.objects.create(user=request.user)
+    cart, _ = Cart.objects.get_or_create(user=user_model)
 
-    cart_items = CartItem.objects.filter(cart=cart,product_variant=product_variant).first()
-    if cart_items:
-        cart_items.quantity += 1
-        cart_items.save()
-    else:
-        CartItem.objects.create(cart=cart,product_variant=product_variant,quantity=1)
 
-    messages.success(request,"Product added to cart!")
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        product_variant=product_variant,
+        defaults={'quantity': 1}
+    )
+
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+
+    messages.success(request, "Product added to cart!")
     return redirect('userCart')
+
 
 @login_required(login_url='login1')
 def apply_coupon(request):
@@ -168,7 +185,10 @@ def product_detail(request, id):
 # All products
 def all_products(request):
     products = ProductVariant.objects.filter(is_default=True).prefetch_related('images')
-    return render(request,'user/products/allproducts.html',{'products':products})
+    carousel = CarouselImage.objects.filter(is_active=True).order_by('-created_at')
+    filterProduct = Product_Filter(request.GET,queryset=products)
+    products =filterProduct.qs
+    return render(request,'user/products/allproducts.html',{'products':products,'filterProduct':filterProduct,'carousel':carousel})
 
 # Category
 def category_product(request):
@@ -189,6 +209,17 @@ def sub_category_product(request,id):
             products = ProductVariant.objects.filter(product__category=category,is_default=True).prefetch_related('images')
     else:
         products = ProductVariant.objects.filter(product__category=category,is_default=True).prefetch_related('images')
+
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+
+    if min_price and max_price:
+        products = products.filter(price__gte=min_price,price__lte=max_price)
+    elif min_price:
+        products = products.filter(price__gte=min_price)
+    elif max_price:
+        products = products.filter(price__lte=max_price)
+
     return render(request,'user/category/subcategory.html',{'current_category':category,'products':products,'category':categories})
 
 @login_required(login_url='login1')
@@ -240,27 +271,88 @@ def deleteAddress(request,id):
     return redirect('userAddress')
 
 # Order Placed
+
 @login_required(login_url='login1')
 def checkout_view(request):
     user = UserModel.objects.filter(user=request.user).first()
     cart = get_object_or_404(Cart, user=user)
     items = cart.items.all()
+
+    if not items:
+        messages.warning(request, "Your cart is empty!")
+        return redirect('userCart')
+
     address = UserAddress.objects.filter(user=user, is_default=True).first()
 
     if not address:
         messages.error(request, "Please add a default address before checkout.")
         return redirect('userAddress')
 
+    address_text = (
+        f"{address.address_type}, {address.street_address}, {address.city}, "
+        f"{address.state}, {address.zip_code}, {address.country}"
+    )
+
     total = cart.total_price
+
+    if request.method == "POST":
+
+        final_address = request.POST.get("address_text", address_text)
+
+        order = Order.objects.create(
+            user=user,
+            address_text=final_address,
+            total_price=total,
+        )
+
+        for item in items:
+            OrderItem.objects.create(
+                order=order,
+                product_variant=item.product_variant,
+                quantity=item.quantity,
+                price=item.product_variant.price
+            )
+
+            item.product_variant.quantity -= item.quantity
+            item.product_variant.save()
+
+        cart.items.all().delete()
+
+        messages.success(request, "Order placed successfully!")
+        return redirect('order_success', order_id=order.id)
 
     context = {
         'cart': cart,
         'items': items,
-        'address': address,
-        'total': total
+        'address_text': address_text,
+        'address':address,
+        'total': total,
     }
-
     return render(request, 'user/order/checkout.html', context)
+
+@login_required(login_url='login1')
+def change_address(request):
+    user = UserModel.objects.filter(user=request.user).first()
+
+    if request.method == "POST":
+
+        if request.POST.get("is_default"):
+            UserAddress.objects.filter(user=user).update(is_default=False)
+
+        UserAddress.objects.create(
+            user=user,
+            street_address=request.POST.get("street_address"),
+            city=request.POST.get("city"),
+            state=request.POST.get("state"),
+            zip_code=request.POST.get("zip_code"),
+            is_default=True if request.POST.get("is_default") else False
+        )
+
+        messages.success(request, "Address updated successfully.")
+        return redirect('userCheckout')
+
+    return redirect('userCheckout')
+
 
 @login_required(login_url='login1')
 def proceed_order_view(request):
@@ -278,7 +370,12 @@ def proceed_order_view(request):
         return redirect('userAddress')
     total_price = cart.total_price
 
-    order = Order.objects.create(user=user,total_price=total_price,address=address)
+    address_text = (
+        f"{address.address_type}, {address.street_address}, {address.city}, "
+        f"{address.state}, {address.zip_code}, {address.country}"
+    )
+
+    order = Order.objects.create(user=user,total_price=total_price,address=address_text)
 
     for item in items:
         variant=item.product_variant
@@ -309,6 +406,8 @@ def order_status(request):
     user = UserModel.objects.filter(user=request.user).first()
     orders =Order.objects.filter(user=user).order_by('created_at')
     return render(request,'user/order/orderStatus.html',{'orders':orders})
+
+
 
 
 

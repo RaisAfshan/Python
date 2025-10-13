@@ -3,6 +3,14 @@
 
 {% block content %}
 <div class="container py-5">
+                {% if messages %}
+                  {% for message in messages %}
+                    <div class="alert alert-success alert-dismissible fade show  alert-{{ message.tags }} mt-2" role="alert">
+                      {{ message }}
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                  {% endfor %}
+                {% endif %}
     <div class="row justify-content-center">
         <div class="col-md-6">
 
@@ -15,9 +23,7 @@
 
                 <h5 class="mt-3">Shipping Address</h5>
                 <p>
-                    {{ order.address.street_address }},<br>
-                    {{ order.address.city }}, {{ order.address.state }},<br>
-                    {{ order.address.country }} - {{ order.address.zip_code }}
+                    {{ order.address }},<br>
                 </p>
 
                 <hr>
