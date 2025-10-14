@@ -1,37 +1,43 @@
 {% extends 'user/userHome.html' %}
 {% load static %}
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <h2>Coupon List</h2>
-                <div class="col">
-                    <table class="table">
-                      <thead>
+<div class="container">
+    <div class="row">
+        <h3 class="text-capitalize my-3">Coupon List</h3>
+        <div class="col">
+                <table class="table">
+                    <thead>
                         <tr>
-                          <th scope="col" class="text-dark">code</th>
-                          <th scope="col" class="text-dark">discount</th>
-                          <th scope="col" class="text-dark">expiry_date</th>
+                            <th scope="col" class="text-dark text-capitalize">code</th>
+                            <th scope="col" class="text-dark text-capitalize">discount</th>
+                            <th scope="col" class="text-dark text-capitalize">expiry date</th>
                         </tr>
-                      </thead>
-                      <tbody>
-                      {% for coupon in coupons %}
-                      {% if coupon %}
-                        <tr>
-                          <td>{{coupon.code}}</td>
-                           {% if coupon.discount_amount %}
-                            <td>{{coupon.discount_amount}}</td>
-                            {% elif coupon.discount_percent %}
-                             <td>{{coupon.discount_percent}}</td>
+                    </thead>
+                    <tbody>
+                        {% for coupon in coupons %}
+                            {% if coupon.is_valid %}
+                                <tr>
+                                    <td class="text-dark">{{ coupon.code }}</td>
+                                    <td class="text-dark">
+                                        {% if coupon.discount_amount %}
+                                            {{ coupon.discount_amount }}
+                                        {% elif coupon.discount_percent %}
+                                            {{ coupon.discount_percent }}%
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-dark">{{ coupon.expiry_date }}</td>
+                                </tr>
                             {% endif %}
-                          <td>{{coupon.expiry_date}}</td>
-                        </tr>
-                      {% else %}
-                        <p> No coupons available </p>
-                      {% endif %}
-                      {%  endfor %}
-                      </tbody>
-                    </table>
-                </div>
+                        {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center">No coupons available</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
         </div>
     </div>
+</div>
 {% endblock %}

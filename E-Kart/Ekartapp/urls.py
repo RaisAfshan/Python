@@ -6,6 +6,7 @@ urlpatterns=[
 #Views
     # path('',views.index,name='index'),
     path('Register',views.userRegisteration, name='Register1'),
+    path('verify-otp',views.verify_otp_view,name='verify_otp'),
     path('login',views.loginUser,name='login1'),
     path('logout',views.logout_view,name='logout1'),
 
@@ -86,6 +87,8 @@ urlpatterns=[
     path('order-success/<int:id>',user_views.order_success_view,name='orderSuccess'),
     path('user-order-status-view',user_views.order_status,name='orderStatus'),
     path('change-address/', user_views.change_address, name='change_address'),
+
+
 
 
 

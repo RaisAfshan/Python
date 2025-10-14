@@ -13,14 +13,14 @@ class CustomUserForm(UserCreationForm):
 
     class Meta:
         model = Custom_User
-        fields = ('username','password1','password2')
+        fields = ('username','password1','password2','email')
 
 class UserForm(forms.ModelForm):
     gender = forms.ChoiceField(label='Gender', choices= GENDER_CHOICES, required=True, widget=forms.RadioSelect(attrs={'class':'form-check-input mb-3'} ),initial='Male')
 
     class Meta:
         model = UserModel
-        fields = ('fullName','phoneNumber','gender','profilePicture','email')
+        fields = ('fullName','phoneNumber','gender','profilePicture')
 
 class CategoryForm(forms.ModelForm):
 
@@ -42,7 +42,7 @@ class ProductForm(forms.ModelForm):
 class userAddressForm(forms.ModelForm):
     class Meta:
         model = UserAddress
-        fields = ('address_type','street_address','city','state','country','zip_code','is_default')
+        fields = ('address_type','home_name','street_address','city','state','country','zip_code','is_default')
 
 
 

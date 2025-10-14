@@ -6,7 +6,7 @@ from django.db.models import TextField
 from django.utils import timezone
 from Ekartapp.Choices import GENDER_CHOICES, ADDRESS_TYPE_CHOICES, ORDER_STATUS
 from decimal import Decimal
-
+from  datetime import timedelta
 
 # Create your models here.
 
@@ -23,7 +23,6 @@ class UserModel(models.Model):
     phoneNumber = models.CharField(max_length=20,unique=True)
     gender = models.CharField(max_length=20,choices=GENDER_CHOICES, default='Male')
     profilePicture = models.FileField(upload_to='upload/')
-    email = models.EmailField()
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=True)
 
@@ -33,6 +32,7 @@ class UserModel(models.Model):
 class UserAddress(models.Model):
     user = models.ForeignKey(UserModel,on_delete=models.CASCADE,related_name='address')
     address_type = models.CharField(max_length=10, choices=ADDRESS_TYPE_CHOICES,default='HOME')
+    home_name = models.CharField(max_length=100,default='manzil')
     street_address = models.CharField(max_length=255)
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
@@ -111,7 +111,7 @@ class ProductVariantImage(models.Model):
 
 class Coupons(models.Model):
     code = models.CharField(max_length=50)
-    discount_amount = models.DecimalField(max_digits=10,decimal_places=2)
+    discount_amount = models.DecimalField(max_digits=10,decimal_places=2,null=True,blank=True)
     discount_percent = models.PositiveIntegerField(null=True,blank=True)
     expiry_date = models.DateTimeField()
     is_active = models.BooleanField(default=True)
@@ -177,6 +177,18 @@ class CarouselImage(models.Model):
 
     def __str__(self):
         return self.title
+
+class EmailOTP(models.Model):
+    user = models.OneToOneField(Custom_User, on_delete=models.CASCADE)
+    otp = models.CharField(max_length=6)
+    is_verified = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_expired(self):
+        return timezone.now() > self.created_at + timedelta(minutes=10)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.otp}"
 
 
 

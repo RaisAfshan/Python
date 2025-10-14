@@ -2,27 +2,36 @@
 {% load static %}
 {% block content %}
 
-     <div id="carouselExample" class="carousel slide">
+     <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-inner">
     {% for image in carousel %}
-    <div class="carousel-item {% if forloop.first %}active{% endif %}">
-      <img src="{{image.image.url}}" class="d-block w-100 carousel-img" alt="...">
-    </div>
+      <div class="carousel-item {% if forloop.first %}active{% endif %} carousel-img">
+        <img src="{{ image.image.url }}" class="d-block w-100" alt="Slide {{ forloop.counter }}">
+      </div>
     {% endfor %}
   </div>
-       {% for image in carousel %}
-  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="{{ forloop.counter0 }}" >
-    <span class="carousel-control-prev-icon" {% if forloop.first %} aria-hidden="true {{forloop.counter}}" {% endif%}></span>
+
+
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
     <span class="visually-hidden">Previous</span>
   </button>
-       {% endfor %}
-        {% for image in carousel %}
-  <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="{{ forloop.counter0 }}">
-    <span class="carousel-control-next-icon"  {% if forloop.first %} aria-hidden="true {{forloop.counter}}" {% endif%}></span>
+
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
     <span class="visually-hidden">Next</span>
   </button>
-        {% endfor %}
+
+
+  <div class="carousel-indicators">
+    {% for image in carousel %}
+      <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="{{ forloop.counter0 }}"
+              class="{% if forloop.first %}active{% endif %}" aria-current="{% if forloop.first %}true{% endif %}"
+              aria-label="Slide {{ forloop.counter }}"></button>
+    {% endfor %}
+  </div>
 </div>
+
 
   <section class="features py-5">
     <div class="container">
@@ -126,7 +135,7 @@
   <section id="new-arrival" class="new-arrival product-carousel py-5 position-relative overflow-hidden">
     <div class="container">
       <div class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-3">
-        <h4 class="text-uppercase">Fashion</h4>
+        <h4 class="text-uppercase ">{{main_category}}</h4>
 <!--        <a href="index.html" class="btn-link">View All Products</a>-->
       </div>
       <div class="row">
@@ -137,14 +146,14 @@
                         <img src="{{c.get_default_image.image.url}}" class="card-img-top p-img rounded-0" alt="...">
                     </div>
                     <div class="card-body">
-                      <h5 class="card-title ">{{c.product.brand}}</h5>
+                      <h5 class="card-title text-capitalize">{{c.product.brand}}</h5>
                       <p class="card-text text-muted mb-1">
-                        <a href="{% url 'productDetail' c.id %}" class="text-decoration-none text-dark">
+                        <a href="{% url 'productDetail' c.id %}" class="text-decoration-none text-dark text-capitalize">
                         {{c.product.title}}
                         </a>
                       </p>
                       <div class="d-flex justify-content-between align-items-center">
-                          <span class="price">{{c.price}}</span>
+                          <span class="price"><span class="text-dark fw-bold">Rs </span> {{c.price | floatformat:2}}</span>
                           <a href="{% url 'addToCart' c.id %}"  class="  btn-custom text-white px-4 py-2 "> Add to cart</a>
                       </div>
                     </div>
@@ -197,29 +206,29 @@
   <section id="best-sellers" class="best-sellers product-carousel py-5 position-relative overflow-hidden">
     <div class="container">
       <div class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-3">
-        <h4 class="text-uppercase">smartphone less than 20,000</h4>
+        <h4 class="text-uppercase">smartphone less than 80,000</h4>
 <!--        <a href="index.html" class="btn-link">View All Products</a>-->
       </div>
         <div class="row">
             {% for i in basePrice %}
             <div class="col-sm-6 col-md-4 col-xl-3 d-flex justify-content-center">
-                  <div class="card product-card border-0 rounded-0 shadow-sm" style="width:18rem">
+                  <div class="card product-card border-0 rounded-0 shadow-sm" style="width:19rem">
                     <div class="overflow-hidden">
                         {% if i.get_default_image %}
                         <img src="{{i.get_default_image.image.url}}" class="card-img-top p-img rounded-0" alt="...">
                         {% endif %}
                     </div>
                     <div class="card-body">
-                      <h5 class="card-title ">{{i.product.brand}}</h5>
+                      <h5 class="card-title text-capitalize">{{i.product.brand}}</h5>
                       <p class="card-text text-muted mb-1">
-                          <a href="{% url 'productDetail' i.id %}" class="text-decoration-none text-dark">
+                          <a href="{% url 'productDetail' i.id %}" class="text-decoration-none text-dark text-capitalize">
                         {{i.product.title}}
                           </a>
                       </p>
-                      <p class="card-text mb-1">{{i.primary_variant}}</p>
-                       <p class="card-text mb-1">{{i.secondary_variant}}</p>
+                      <p class="card-text mb-1 text-capitalize">{{i.primary_variant}}</p>
+                       <p class="card-text mb-1 text-capitalize">{{i.secondary_variant}}</p>
                       <div class="d-flex justify-content-between align-items-center">
-                          <span class="price">{{i.price}}</span>
+                          <span class="price text-capitalize"><span class="text-dark fw-bold">Rs </span>{{i.price | floatformat:2}}</span>
                           <form action="{% url 'addToCart' i.id %}" method="POST">
                               {% csrf_token %}
                                 <button class="btn btn-dark btn-lg">
@@ -239,7 +248,7 @@
   <section id="related-products" class="related-products product-carousel py-5 position-relative overflow-hidden">
     <div class="container">
       <div class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-3">
-        <h4 class="text-uppercase">You May Also Like</h4>
+        <h4 class="text-uppercase">New Products</h4>
 <!--        <a href="index.html" class="btn-link">View All Products</a>-->
       </div>
 
@@ -253,14 +262,14 @@
                   {% endif %}
                 </div>
                 <div class="card-body">
-                  <h5 class="card-title ">{{recent.product.brand}}</h5>
-                  <p class="card-text text-muted mb-4">
+                  <h5 class="card-title text-capitalize">{{recent.product.brand}}</h5>
+                  <p class="card-text text-muted mb-1 text-capitalize">
                      <a href="{% url 'productDetail' recent.id %}" class="text-decoration-none text-dark">
                         {{recent.product.title}}
                      </a>
                   </p>
                   <div class="d-flex justify-content-between align-items-center">
-                      <span class="price">{{recent.price}}</span>
+                      <span class="price"><span class="text-dark fw-bold">Rs </span>{{recent.price | floatformat:2}}</span>
                       <a href="{% url 'productDetail' recent.id %}"  class="  btn-custom text-white px-4 py-2 "> show detail</a>
                   </div>
                 </div>

@@ -1,3 +1,5 @@
+from wsgiref.util import request_uri
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,redirect
 from decimal import Decimal
@@ -34,9 +36,10 @@ def user_productHome(request):
         'carousel':carousel,
         'catproduct':products,
         'recent_products':recent_products,
+        'main_category':main_category
     }
     return render(request,'user/userProductHome.html',context)
-
+# Cart
 @login_required(login_url='login1')
 def user_cart(request):
     if not request.user.is_authenticated:
@@ -141,6 +144,9 @@ def apply_coupon(request):
 
     return redirect('userCart')
 
+@login_required(login_url='login1')
+def delete_cartItem(request,id):
+    pass
 
 
 @login_required(login_url='login1')
@@ -289,7 +295,7 @@ def checkout_view(request):
         return redirect('userAddress')
 
     address_text = (
-        f"{address.address_type}, {address.street_address}, {address.city}, "
+        f"{address.home_name}, {address.street_address}, {address.city}, "
         f"{address.state}, {address.zip_code}, {address.country}"
     )
 
@@ -371,7 +377,7 @@ def proceed_order_view(request):
     total_price = cart.total_price
 
     address_text = (
-        f"{address.address_type}, {address.street_address}, {address.city}, "
+        f"{address.home_name}, {address.street_address}, {address.city}, "
         f"{address.state}, {address.zip_code}, {address.country}"
     )
 
@@ -399,13 +405,19 @@ def proceed_order_view(request):
 @login_required(login_url='login1')
 def order_success_view(request,id):
     order = get_object_or_404(Order,id=id)
+
     return render(request,'user/order/orderSuccess.html',{'order':order})
 
 @login_required(login_url='login1')
 def order_status(request):
     user = UserModel.objects.filter(user=request.user).first()
     orders =Order.objects.filter(user=user).order_by('created_at')
+
     return render(request,'user/order/orderStatus.html',{'orders':orders})
+
+
+
+
 
 
 

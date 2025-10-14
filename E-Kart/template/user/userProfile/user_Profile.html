@@ -11,10 +11,12 @@
                     <div class="card-body">
                         <form method="post">
                             <div class="row">
-                                <div class="col-md-4 text-center mb-4">
+                                <div class="col-md-4 text-center mb-4 d-flex  justify-content-center align-items-center">
                                     <div class="profile-pic-wrapper">
-                                        <div class="profile-pic-container">
-                                            <img src="{{user.profilePicture.url}}" class="profile-pic rounded-circle">
+                                        <div class="profile-pic-container ">
+                                            <img src="{{user.profilePicture.url}}" class="profile-pic rounded-circle"
+                                                style="width:250px; height:250px; object-fit:cover"
+                                                >
                                         </div>
                                     </div>
                                 </div>
@@ -27,17 +29,17 @@
 
                                                 <div class="mb-3">
                                                     <label for="name" class="form-label">Full Name</label>
-                                                    <input type="text" class="form-control" id="name" name="name" value="{{user.fullName}}" required readonly>
+                                                    <input type="text" class="form-control text-capitalize" id="name" name="name" value="{{user.fullName}}" required readonly>
                                                 </div>
 
                                                 <div class="row">
                                                     <div class="col-md-6 mb-3">
                                                         <label for="gender" class="form-label">Gender</label>
-                                                        <input type="text" class="form-control" id="gender" name="gender" value="{{user.gender}}" required readonly>
+                                                        <input type="text" class="form-control text-capitalize" id="gender" name="gender" value="{{user.gender}}" required readonly>
                                                     </div>
                                                     <div class="col-md-6 mb-3">
                                                         <label for="email" class="form-label">Email Address</label>
-                                                        <input type="email" class="form-control" id="email" name="email" value="{{user.email}}" required readonly>
+                                                        <input type="email" class="form-control" id="email" name="email" value="{{request.user.email}}" required readonly>
                                                     </div>
                                                 </div>
 
@@ -48,7 +50,7 @@
                                                     </div>
                                                     <div class="col-md-6 mb-3">
                                                         <label for="place" class="form-label">Place</label>
-                                                        <input type="text" class="form-control" id="place" name="place" value="{{address.country}}" required readonly>
+                                                        <input type="text" class="form-control text-capitalize" id="place" name="place" value="{{address.country}}" required readonly>
                                                     </div>
                                                 </div>
                                             </div>
