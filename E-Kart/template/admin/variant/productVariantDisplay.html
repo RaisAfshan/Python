@@ -18,35 +18,35 @@
         <thead>
           <tr>
             <th scope="col">#</th>
-            <th scope="col">Title</th>
             <th scope="col">Brand</th>
-            <th scope="col">Description</th>
+            <th scope="col">Title</th>
             <th scope="col">Primary Variant</th>
             <th scope="col"> Secondary Variant</th>
-            <th scope="col">Price</th>
             <th scope="col">Quantity</th>
-            <th scope="col">   </th>
-            <th scope="col">   </th>
+            <th scope="col">Price</th>
             <th scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>
+      {% for variant in product_variants %}
         <tr>
-          <th scope="row">id</th>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
+          <th scope="row">{{variant.id}}</th>
+          <td>{{variant.product.brand}}</td>
+          <td>{{variant.product.title}}</td>
+          <td>{{variant.primary_variant}}</td>
+          {% if variant.secondary_variant %}
+          <td>{{variant.secondary_variant}}</td>
+          {% else %}
+          <td> </td>
+          {% endif %}
+          <td>{{variant.quantity}}</td>
+          <td>{{variant.price}}</td>
           <td>
             <a href="{% url 'productVariantEdit' %}" class="btn btn-sm btn-outline-warning me-3"> edit </a>
             <a href="#" class="btn btn-sm btn-outline-danger"> delete </a>
           </td>
         </tr>
+        {% endfor %}
         </tbody>
       </table>
     </div>

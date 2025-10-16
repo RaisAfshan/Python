@@ -69,8 +69,12 @@ def verify_otp_view(request):
 
 def loginUser(request):
     if request.user.is_authenticated:
-        if request.user.is_user:
+        # Redirect authenticated users according to their role
+        if request.user.is_staff:
+            return redirect('adminHomePage')
+        elif request.user.is_user:
             return redirect('userProductHome')
+
     if request.method == 'POST':
         username = request.POST.get('uname')
         password = request.POST.get('pass')
@@ -82,26 +86,24 @@ def loginUser(request):
 
         if user_obj and not user_obj.is_active:
             send_otp(user_obj)
-            messages.warning(request,'Please verify your email before logging in.')
+            messages.warning(request, 'Please verify your email before logging in.')
             request.session['user_id'] = user_obj.id
             return redirect('verify_otp')
 
-        user =authenticate(request, username=username,password=password)
+        user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            login(request,user)
-            next_url = request.GET.get('next') or request.GET.get('next') or 'userProductHome'
-            if next_url:
-                return redirect(next_url)
+            login(request, user)
 
             if user.is_staff:
                 return redirect('adminHomePage')
-            if user.is_user:
+            elif user.is_user:
                 return redirect('userProductHome')
         else:
-            messages.info(request,"Invalid Credentials")
+            messages.info(request, "Invalid Credentials")
 
-    return render(request,'login.html')
+    return render(request, 'login.html')
+
 
 
 def logout_view(request):

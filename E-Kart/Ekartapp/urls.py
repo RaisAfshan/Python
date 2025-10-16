@@ -20,6 +20,19 @@ urlpatterns=[
     path('category_edit/<int:id>',admin_views.category_edit,name='categoryEdit'),
     path('category_delete/<int:id>',admin_views.category_delete,name='categoryDelete'),
 
+    #Variant-type CRUD
+    path('variant-display', admin_views.variant_type_view,name='variantDisplay'),
+    path('variant-type-add',admin_views.variant_type_add,name='variantTypeAdd'),
+    path('variant-type-edit/<int:id>',admin_views.variant_type_edit,name='variantTypeEdit'),
+    path('variant-type-delete/<int:id>',admin_views.variant_type_delete,name='variantTypeDelete'),
+
+    #Varinant CRUD
+    path('variant-add',admin_views.variant_value_add,name='variantAdd'),
+    path('variant-value-display',admin_views.variant_value_display,name='variantValueDisplay'),
+    path('variant-value-edit/<int:id>',admin_views.variant_value_edit,name='variantValueEdit'),
+    path('variant-value-delete/<int:id>',admin_views.variant_value_delete,name='variantValueDelete'),
+
+
     #Product CRUD
     path('product_display',admin_views.product_view,name='productDisplay'),
     path('product_add',admin_views.product_add,name='productAdd'),
@@ -47,6 +60,8 @@ urlpatterns=[
 
     #User Admin
     path('admin_user', admin_views.admin_user_view,name='adminUser'),
+    path('admin_user_edit/<int:id>',admin_views.admin_user_edit,name='adminUserEdit'),
+    path('admin-user-delete/<int:id>',admin_views.user_delete,name='userDelete'),
 
     #Banner
     path('banner_add',admin_views.add_banner,name='add_Banner'),

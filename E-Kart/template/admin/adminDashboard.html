@@ -117,6 +117,28 @@
                   </a>
                 </li>
                 <li class="sidebar-item">
+                  <a class="sidebar-link justify-content-between"
+                    href=" {% url 'variantDisplay' %}">
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="round-16 d-flex align-items-center justify-content-center">
+                        <i class="ti ti-circle"></i>
+                      </div>
+                      <span class="hide-menu">Variant Type</span>
+                    </div>
+                  </a>
+                </li>
+                <li class="sidebar-item">
+                  <a class="sidebar-link justify-content-between"
+                    href=" {% url 'variantValueDisplay' %}">
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="round-16 d-flex align-items-center justify-content-center">
+                        <i class="ti ti-circle"></i>
+                      </div>
+                      <span class="hide-menu">Variants</span>
+                    </div>
+                  </a>
+                </li>
+                <li class="sidebar-item">
                   <a class="sidebar-link justify-content-between"  
                     href="{% url 'productDisplay' %}">
                     <div class="d-flex align-items-center gap-3">
@@ -517,7 +539,6 @@
 <!--        </nav>-->
 <!--      </header>-->
       <!--  Header End -->
-      <div class="body-wrapper-inner">
         <div class="container-fluid">
           {% block content %}
 
@@ -530,7 +551,6 @@
                 class="pe-1 text-primary text-decoration-underline">Wrappixel.com</a> Distributed by <a href="https://themewagon.com" target="_blank" >ThemeWagon</a></p>
           </div>
         </div>
-      </div>
     </div>
   </div>
   <script src="{% static 'adminDash/assets/libs/jquery/dist/jquery.min.js' %}"></script>

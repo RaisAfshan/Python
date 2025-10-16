@@ -1,6 +1,7 @@
 from tkinter.constants import CASCADE
 
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import AbstractUser,BaseUserManager
 from django.db import models
 from django.db.models import TextField
 from django.utils import timezone
@@ -15,6 +16,7 @@ class Custom_User(AbstractUser):
 
     def __str__(self):
         return self.username
+
 
 
 class UserModel(models.Model):
@@ -51,13 +53,15 @@ class Category(models.Model):
         return self.name
 class VariantType(models.Model):
     name = models.CharField(max_length=200)
+    status = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
 
 class Variants(models.Model):
-    variant_type = models.ForeignKey(VariantType,on_delete=models.CASCADE,related_name='variant_type')
+    variant_type = models.ForeignKey(VariantType,on_delete=models.CASCADE,related_name='variants')
     value = models.CharField(max_length=200)
+    status = models.BooleanField(default=True)
 
 
     def __str__(self):
@@ -87,6 +91,7 @@ class ProductVariant(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     quantity = models.PositiveIntegerField(default=0)
     is_default = models.BooleanField(default=False)
+    status = models.BooleanField(default=True)
 
     def save(self,*args,**kwargs):
         if self.is_default:

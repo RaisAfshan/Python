@@ -1,0 +1,44 @@
+{% extends 'admin/adminDashboard.html' %}
+{% block content %}
+
+<div class="container">
+  <div class="row ">
+    <div class="col-7">
+        <h3 class="text-dark text-center my-3"> Variants List</h3>
+         <a class="btn btn-primary mb-4" href="{% url 'variantAdd' %}" role="button">Add values</a>
+        <table class="table table-bordered">
+          <thead>
+              <tr>
+                  <th class="text-dark">Variant Type</th>
+                  <th class="text-dark">Values</th>
+                  <th class="text-dark">Action</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for type in variants %}
+                  {% for value in type.variants.all %}
+                      <tr>
+                          {% if forloop.first %}
+                              <td rowspan="{{ type.variants.count }}" class="text-dark">{{ type.name }}</td>
+                          {% endif %}
+                          <td class="text-dark">{{ value.value }}</td>
+                          <td>
+                                <a class="btn btn-outline-warning btn-sm mb-4" href="{% url 'variantValueEdit' value.id %}" role="button">edit</a>
+                                 <a class="btn btn-outline-danger btn-sm mb-4" href="{% url 'variantValueDelete' value.id %}" role="button">delete</a>
+                          </td>
+                      </tr>
+                  {% empty %}
+                      <tr>
+                          <td>{{ type.name }}</td>
+                          <td>-</td>
+                      </tr>
+                  {% endfor %}
+              {% endfor %}
+          </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

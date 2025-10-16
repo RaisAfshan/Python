@@ -1,8 +1,11 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render,redirect
+from django.db.models import Prefetch
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from Ekartapp.form import CategoryForm, ProductForm
-from Ekartapp.models import Category, Product
+from Ekartapp.form import CategoryForm, ProductForm, UserForm, VariantTypeForm, \
+    VariantsForm
+from Ekartapp.models import Category, Product, UserModel, VariantType, Variants, ProductVariant
+
 
 @login_required(login_url='login1')
 def admin_dashboard(request):
@@ -64,14 +67,14 @@ def product_add(request):
             prod.status = True
             prod.save()
             messages.success(request, "Product added successfully")
-            return redirect('product_display')
+            return redirect('productDisplay')
         else:
             messages.error(request,"error while adding products")
     return render(request,'admin/productAddForm.html',{'Pform':Pform})
 
 @login_required(login_url='login1')
 def product_view(request):
-    products = Product.objects.filter(status=True,created_by=request.user)
+    products = Product.objects.filter(status=True,created_by=request.user).order_by('-created_at')
     return render(request,'admin/productDisplay.html',{'products':products})
 
 @login_required(login_url='login1')
@@ -81,9 +84,9 @@ def product_edit(request,id):
         pform = ProductForm(request.POST,instance=editData)
         if pform.is_valid():
             pform.save()
-            return redirect('product_display')
+            return redirect('productDisplay')
     else:
-        pform = ProductForm(insatnce=editData)
+        pform = ProductForm(instance=editData)
     return render(request,'admin/productEditForm.html',{'pform':pform})
 
 @login_required(login_url='login1')
@@ -91,12 +94,97 @@ def product_delete(request,id):
     product_data = Product.objects.get(id=id)
     product_data.status = False
     product_data.save()
-    return redirect('product_display')
+    return redirect('productDisplay')
+
+@login_required(login_url='login1')
+def variant_type_view(request):
+    variant = VariantType.objects.filter(status=True)
+    return render(request,'admin/VariantType/variant_type.html',{'variant_type':variant})
+
+
+@login_required(login_url='login1')
+def variant_type_add(request):
+    Vform = VariantTypeForm
+    if request.method == 'POST':
+        Vform = VariantTypeForm(request.POST)
+        if Vform.is_valid():
+            Vform.save()
+            messages.success(request, 'variant type added successfully ')
+            return redirect('variantDisplay')
+        else:
+            messages.error(request,'failed to add')
+    return render(request,'admin/VariantType/variantTypeAdd.html',{'Vform':Vform})
+
+@login_required(login_url='login1')
+def variant_type_edit(request,id):
+    var_type = get_object_or_404(VariantType,id=id)
+    if request.method == 'POST':
+        Vform = VariantTypeForm(request.POST,instance=var_type)
+        if Vform.is_valid():
+            Vform.save()
+            messages.success(request, 'variant type updated successfully ')
+            return redirect('variantDisplay')
+        else:
+            messages.error(request,'variant type update failed')
+    else:
+        Vform = VariantTypeForm(instance=var_type)
+    return render(request,'admin/VariantType/variantTypeEdit.html',{'Vform':Vform})
+
+@login_required(login_url='login1')
+def variant_type_delete(request,id):
+    var_type = get_object_or_404(VariantType,id=id)
+    var_type.status = False
+    var_type.save()
+    messages.success(request,'deleted successfully')
+    return redirect('variantDisplay')
+
+@login_required(login_url='login1')
+def variant_value_add(request):
+    valueForm = VariantsForm()
+    if request.method == 'POST':
+        valueForm = VariantsForm(request.POST)
+        if valueForm.is_valid():
+            valueForm.save()
+            messages.success(request, 'variant value added successfully ')
+            return redirect('variantValueDisplay')
+        else:
+            messages.error(request, 'failed to add')
+    return render(request,'admin/VariantType/add_variant.html',{'valueForm':valueForm})
+
+@login_required(login_url='login1')
+def variant_value_edit(request,id):
+    value_id = get_object_or_404(Variants,id=id)
+    if request.method == 'post':
+        valueForm = VariantsForm(request.POST,instance=value_id)
+        if valueForm.is_valid():
+            valueForm.save()
+            messages.success(request, 'variant value updated successfully ')
+            return redirect('variantValueDisplay')
+        else:
+            messages.error(request, 'failed to update')
+    else:
+        valueForm = VariantsForm(instance=value_id)
+    return render(request,'admin/VariantType/edit_variant.html',{'valueForm':valueForm})
+
+
+@login_required(login_url='login1')
+def variant_value_display(request):
+    variants = VariantType.objects.filter(status=True).prefetch_related(Prefetch('variants',queryset=Variants.objects.filter(status=True)))
+    return render(request,'admin/VariantType/variant_values.html',{'variants':variants})
+
+@login_required(login_url='login1')
+def variant_value_delete(request,id):
+    value_id = get_object_or_404(Variants,id=id)
+    value_id.status = False
+    value_id.save()
+    return redirect('variantValueDisplay')
 
 # Product Variant Crud
 @login_required(login_url='login1')
 def product_variant_display(request):
-    return render(request,'admin/variant/productVariantDisplay.html')
+
+    product_variants = ProductVariant.objects.filter(status=True,product__status=True,product__primary_variant__status=True,primary_variant__status=True).order_by('-created_at')
+    return render(request,'admin/variant/productVariantDisplay.html',{'product_variants':product_variants})
 
 @login_required(login_url='login1')
 def product_variant_add(request):
@@ -144,7 +232,28 @@ def admin_products_overview(request):
 # admin user view
 @login_required(login_url='login1')
 def admin_user_view(request):
-    return render(request,'admin/user/adminUserView.html')
+    userData = UserModel.objects.filter(status=True)
+    return render(request,'admin/user/adminUserView.html',{'userData':userData})
+
+@login_required(login_url='login1')
+def admin_user_edit(request,id):
+    user_id = get_object_or_404(UserModel,id=id)
+    if request.method == 'POST':
+        uform =UserForm(request.POST,instance=user_id)
+        if uform.is_valid():
+            uform.save()
+            return redirect('adminUser')
+    else:
+        uform = UserForm(instance=user_id)
+    return render(request,'admin/user/userEdit.html',{'uform':uform})
+
+@login_required(login_url='login1')
+def user_delete(request,id):
+    user_id = get_object_or_404(UserModel,id=id)
+    print(user_id.status)
+    user_id.status = False
+    user_id.save()
+    return redirect('adminUser')
 
 # Banner CRUD
 @login_required(login_url='login1')

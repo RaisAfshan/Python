@@ -190,7 +190,7 @@ def product_detail(request, id):
 
 # All products
 def all_products(request):
-    products = ProductVariant.objects.filter(is_default=True).prefetch_related('images')
+    products = ProductVariant.objects.filter(is_default=True,status=True).prefetch_related('images')
     carousel = CarouselImage.objects.filter(is_active=True).order_by('-created_at')
     filterProduct = Product_Filter(request.GET,queryset=products)
     products =filterProduct.qs
