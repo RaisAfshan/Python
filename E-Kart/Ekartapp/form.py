@@ -3,7 +3,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
 from Ekartapp.Choices import GENDER_CHOICES
-from Ekartapp.models import Custom_User, UserModel, Category, Product, UserAddress, VariantType, Variants
+from Ekartapp.models import Custom_User, UserModel, Category, Product, UserAddress, VariantType, Variants, \
+    ProductVariant
 
 
 class CustomUserForm(UserCreationForm):
@@ -37,7 +38,7 @@ class ProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        fields = ('title','description','status','category','primary_variant','secondary_variant')
+        fields = ('title','brand','description','status','category','primary_variant','secondary_variant')
 
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
@@ -47,16 +48,19 @@ class ProductForm(forms.ModelForm):
 class VariantTypeForm(forms.ModelForm):
     class Meta:
         model = VariantType
-        fields = ('name',)
+        fields = ('name','status')
 
 
 
 class VariantsForm(forms.ModelForm):
     class Meta:
         model = Variants
-        fields = ['value','variant_type']
+        fields = ['value','variant_type','status']
 
-
+class ProductVariantForm(forms.ModelForm):
+    class Meta:
+        model = ProductVariant
+        fields =('primary_variant','secondary_variant','price','quantity','is_default','status')
 
 
 class userAddressForm(forms.ModelForm):

@@ -41,9 +41,9 @@ urlpatterns=[
 
     #Product Variant CRUD
     path('product_variant_display',admin_views.product_variant_display,name='productVariantDisplay'),
-    path('product_variant_add',admin_views.product_variant_add,name='productVariantAdd'),
-    path('product_variant_edit',admin_views.product_variant_edit,name='productVariantEdit'),
-    #delete
+    path('product_variant_add/<int:id>',admin_views.product_variant_add,name='productVariantAdd'),
+    path('product_variant_edit/<int:id>',admin_views.product_variant_edit,name='productVariantEdit'),
+    path('product-varinat-delete/<int:id>',admin_views.product_variant_delete,name='productVariantDelete'),
 
     #Product Image CRUD
     path('product_image',admin_views.product_images_display,name='productImage'),

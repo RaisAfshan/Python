@@ -8,10 +8,10 @@
       <button class="btn btn-primary mb-3"> Add Product</button>
     </a>
     <div class="col">
-      <h3 class="text-center mb-3">
+      <h3 class="text-center ">
         All product list
       </h3>
-
+      <a href="{% url 'productVariantDisplay' %}" class="mb-3"> <<< got to variants</a>
       {% if messages %}
       {% for message in messages %}
         <div class="alert alert-success alert-dismissible fade show  alert-{{ message.tags }} mt-2" role="alert">
@@ -26,11 +26,13 @@
           <thead>
             <tr>
               <th scope="col" class="text-dark">#</th>
+               <th scope="col" class="text-dark">Brand</th>
               <th scope="col" class="text-dark">title</th>
               <th scope="col" class="text-dark">description</th>
               <th scope="col" class="text-dark">category</th>
               <th scope="col" class="text-dark text-center">primary variant</th>
               <th scope="col" class="text-dark text-center">secondary variant</th>
+              <th scope="col" class="text-dark text-center">Add Variants</th>
               <th scope="col" class="text-dark">actions</th>
             </tr>
           </thead>
@@ -38,21 +40,24 @@
           {% for product in products %}
             <tr>
               <th scope="row">{{product.id}}</th>
+              <th>{{product.brand}}</th>
               <td>{{product.title}}</td>
-              <td>{{product.description | truncatechars:20 }}</td>
+              <td>{{product.description | truncatechars:10 }}</td>
               <td>{{product.category}}</td>
               <td class="text-center">{{product.primary_variant}}</td>
               <td class="text-center">
                 {% if product.secondary_variant ==  None %}
-                no secondary variant
+                <p>--</p>
                 {% else %}
                 {{product.secondary_variant}}
                 {% endif %}
               </td>
               <td>
+                <a href="{% url 'productVariantAdd' product.id %}" class="btn btn-sm btn-outline-primary me-2"> Add Variant </a>
+              </td>
+              <td>
                 <a href="{% url 'productEdit' product.id %}" class="btn btn-sm btn-outline-warning me-2"> edit </a>
                 <a href="{% url 'productDelete' product.id %}" class="btn btn-sm btn-outline-danger"> delete </a>
-
               </td>
             </tr>
           {% endfor %}

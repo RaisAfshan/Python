@@ -2,8 +2,10 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Prefetch
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+
+from Ekartapp.adminFilter import ProductVariantFilter
 from Ekartapp.form import CategoryForm, ProductForm, UserForm, VariantTypeForm, \
-    VariantsForm
+    VariantsForm, ProductVariantForm
 from Ekartapp.models import Category, Product, UserModel, VariantType, Variants, ProductVariant
 
 
@@ -182,21 +184,67 @@ def variant_value_delete(request,id):
 # Product Variant Crud
 @login_required(login_url='login1')
 def product_variant_display(request):
-
     product_variants = ProductVariant.objects.filter(status=True,product__status=True,product__primary_variant__status=True,primary_variant__status=True).order_by('-created_at')
-    return render(request,'admin/variant/productVariantDisplay.html',{'product_variants':product_variants})
+    filter_product_variant = ProductVariantFilter(request.GET,queryset=product_variants)
+    product_variants = filter_product_variant.qs
+    return render(request,'admin/variant/productVariantDisplay.html',{'product_variants':product_variants,'filter_product_variant':filter_product_variant})
 
 @login_required(login_url='login1')
-def product_variant_add(request):
-    return render(request,'admin/variant/productVariantAdd.html')
+def product_variant_add(request,id):
+    product = get_object_or_404(Product,id=id)
+
+    primary_variants = Variants.objects.filter(variant_type=product.primary_variant,status=True)
+    secondary_variants = Variants.objects.none()
+    if product.secondary_variant:
+        secondary_variants = Variants.objects.filter(variant_type=product.secondary_variant,status=True)
+
+    if request.method == 'POST':
+        prod_var_form = ProductVariantForm(request.POST)
+        if prod_var_form.is_valid():
+            prod_var = prod_var_form.save(commit=False)
+            prod_var.product = product
+            prod_var.save()
+            messages.success(request, 'Product variant added successfully ')
+            return redirect('productVariantDisplay')
+        else:
+            messages.error(request, 'failed to add ')
+    else:
+        prod_var_form = ProductVariantForm()
+
+    prod_var_form.fields['primary_variant'].queryset  = primary_variants
+    prod_var_form.fields['secondary_variant'].queryset = secondary_variants
+
+    return render(request,'admin/variant/productVariantAdd.html',{'prod_var_form':prod_var_form,'product':product})
 
 @login_required(login_url='login1')
-def product_variant_edit(request):
-    return render(request,'admin/variant/editVariantProduct.html')
+def product_variant_edit(request, id):
+    product_var = get_object_or_404(ProductVariant, id=id)
+    product = product_var.product
+
+    primary_variants = Variants.objects.filter(variant_type=product.primary_variant, status=True)
+    secondary_variants = Variants.objects.none()
+    if product.secondary_variant:
+        secondary_variants = Variants.objects.filter(variant_type=product.secondary_variant, status=True)
+
+    if request.method == 'POST':
+        form = ProductVariantForm(request.POST, instance=product_var)
+        if form.is_valid():
+            form.save()
+            return redirect('productVariantDisplay')
+    else:
+        form = ProductVariantForm(instance=product_var)
+
+    form.fields['primary_variant'].queryset = primary_variants
+    form.fields['secondary_variant'].queryset = secondary_variants
+
+    return render(request, 'admin/variant/editVariantProduct.html', {'prod_var_edit': form})
 
 @login_required(login_url='login1')
-def product_variant_delete(request):
-    pass
+def product_variant_delete(request,id):
+    product_var_id = get_object_or_404(ProductVariant,id=id)
+    product_var_id.status = False
+    product_var_id.save()
+    return redirect('productVariantDisplay')
 
 # Product Image
 @login_required(login_url='login1')
