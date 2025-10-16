@@ -1,0 +1,49 @@
+{% extends 'admin/adminDashboard.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h3 class="text-center mb-3">Coupons</h3>
+  <a href="{% url 'coupon_add' %}" class="btn btn-primary mb-3">Add Coupon</a>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <table class="table table-hover">
+    <thead class="table">
+      <tr>
+        <th>#</th>
+        <th class="text-dark">Code</th>
+        <th class="text-dark">Discount Amount</th>
+        <th class="text-dark">Discount Percent</th>
+        <th class="text-dark">Expiry</th>
+        <th class="text-dark">Active</th>
+        <th class="text-dark">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for coupon in coupons %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ coupon.code }}</td>
+        <td>{{ coupon.discount_amount }}</td>
+        <td>{{ coupon.discount_percent }}%</td>
+        <td>{{ coupon.expiry_date|date:"d M Y, H:i" }}</td>
+        <td>{{ coupon.is_active|yesno:"Yes,No" }}</td>
+        <td>
+          <a href="{% url 'coupon_edit' coupon.id %}" class="btn btn-sm btn-outline-warning">Edit</a>
+          <a href="{% url 'coupon_delete' coupon.id %}" class="btn btn-sm btn-outline-danger"
+             onclick="return confirm('Are you sure you want to delete this coupon?')">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="text-center">No coupons available.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

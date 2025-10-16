@@ -60,12 +60,12 @@
               <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
               <span class="hide-menu">Home</span>
             </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="{% url 'adminProducts' %}" aria-expanded="false">
-                <i class="ti ti-atom"></i>
-                <span class="hide-menu">My products</span>
-              </a>
-            </li>
+<!--            <li class="sidebar-item">-->
+<!--              <a class="sidebar-link" href="#" aria-expanded="false">-->
+<!--                <i class="ti ti-atom"></i>-->
+<!--                <span class="hide-menu">My products</span>-->
+<!--              </a>-->
+<!--            </li>-->
             <!-- ---------------------------------- -->
             <!-- Dashboard -->
             <!-- ---------------------------------- -->
@@ -225,7 +225,19 @@
 
               </a>
             </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link justify-content-between"
+                href="{% url 'coupon_list' %}"
+                aria-expanded="false">
+                <div class="d-flex align-items-center gap-3">
+                  <span class="d-flex">
+                    <i class=" ti ti-bookmark"></i>
+                  </span>
+                  <span class="hide-menu">Coupon</span>
+                </div>
 
+              </a>
+            </li>
 
             <li>
               <span class="sidebar-divider lg"></span>

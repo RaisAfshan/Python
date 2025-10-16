@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 
 from Ekartapp.Choices import GENDER_CHOICES
 from Ekartapp.models import Custom_User, UserModel, Category, Product, UserAddress, VariantType, Variants, \
-    ProductVariant, ProductVariantImage
+    ProductVariant, ProductVariantImage, Coupons
 
 
 class CustomUserForm(UserCreationForm):
@@ -66,6 +66,19 @@ class ProductVariantImageForm(forms.ModelForm):
     class Meta:
         model = ProductVariantImage
         fields = ('image','is_default')
+
+class CouponForm(forms.ModelForm):
+    class Meta:
+        model = Coupons
+        fields = '__all__'
+        widgets = {
+            'code': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter coupon code'}),
+            'discount_amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter discount amount'}),
+            'discount_percent': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter discount percent'}),
+            'expiry_date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
 
 
 class userAddressForm(forms.ModelForm):

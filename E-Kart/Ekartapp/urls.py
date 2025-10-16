@@ -64,6 +64,12 @@ urlpatterns=[
     path('admin_user_edit/<int:id>',admin_views.admin_user_edit,name='adminUserEdit'),
     path('admin-user-delete/<int:id>',admin_views.user_delete,name='userDelete'),
 
+    # Coupons
+    path('coupons/', admin_views.coupon_list, name='coupon_list'),
+    path('coupons/add/', admin_views.coupon_add, name='coupon_add'),
+    path('coupons/edit/<int:id>/', admin_views.coupon_edit, name='coupon_edit'),
+    path('coupons/delete/<int:id>/', admin_views.coupon_delete, name='coupon_delete'),
+
     #Banner
     path('banner_add',admin_views.add_banner,name='add_Banner'),
     path('banner_display',admin_views.banner_display,name='bannerDisplay'),

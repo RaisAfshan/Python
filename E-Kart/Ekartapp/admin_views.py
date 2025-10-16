@@ -5,8 +5,9 @@ from django.contrib import messages
 
 from Ekartapp.adminFilter import ProductVariantFilter
 from Ekartapp.form import CategoryForm, ProductForm, UserForm, VariantTypeForm, \
-    VariantsForm, ProductVariantForm, ProductVariantImageForm
-from Ekartapp.models import Category, Product, UserModel, VariantType, Variants, ProductVariant, ProductVariantImage
+    VariantsForm, ProductVariantForm, ProductVariantImageForm, CouponForm
+from Ekartapp.models import Category, Product, UserModel, VariantType, Variants, ProductVariant, ProductVariantImage, \
+    Coupons
 
 
 @login_required(login_url='login1')
@@ -269,7 +270,6 @@ def product_image_add(request,id):
 @login_required(login_url='login1')
 def product_image_edit(request,id):
     product_image = get_object_or_404(ProductVariantImage,id=id)
-    print(product_image.product_variant)
     if request.method == 'POST':
         image_form = ProductVariantImageForm(request.POST,request.FILES,instance=product_image)
         if image_form.is_valid():
@@ -350,6 +350,49 @@ def banner_delete(request):
 @login_required(login_url='login1')
 def admin_homepage(request):
     return render(request,'admin/AdminHomePage.html')
+
+# READ
+@login_required(login_url='login1')
+def coupon_list(request):
+    coupons = Coupons.objects.filter(status=True)
+    return render(request, 'admin/coupons/coupon_list.html', {'coupons': coupons})
+
+# CREATE
+@login_required(login_url='login1')
+def coupon_add(request):
+    if request.method == 'POST':
+        form = CouponForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Coupon added successfully!')
+            return redirect('coupon_list')
+    else:
+        form = CouponForm()
+    return render(request, 'admin/coupons/coupon_form.html', {'form': form, 'title': 'Add Coupon'})
+
+
+# UPDATE
+@login_required(login_url='login1')
+def coupon_edit(request, id):
+    coupon = get_object_or_404(Coupons, id=id)
+    if request.method == 'POST':
+        form = CouponForm(request.POST, instance=coupon)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Coupon updated successfully!')
+            return redirect('coupon_list')
+    else:
+        form = CouponForm(instance=coupon)
+    return render(request, 'admin/coupons/coupon_form.html', {'form': form, 'title': 'Edit Coupon'})
+
+
+# DELETE
+@login_required(login_url='login1')
+def coupon_delete(request, id):
+    coupon = get_object_or_404(Coupons, id=id)
+    coupon.delete()
+    messages.success(request, 'Coupon deleted successfully!')
+    return redirect('coupon_list')
 
 
 
