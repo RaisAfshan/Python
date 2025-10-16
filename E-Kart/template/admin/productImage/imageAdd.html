@@ -1,4 +1,5 @@
 {% extends 'admin/adminDashboard.html' %}
+{% load static crispy_forms_tags %}
 {% block content %}
 <div class="container">
         <div class="row justify-content-center">
@@ -8,8 +9,9 @@
                 </div>
                     <div class="card shadow-sm">
                         <div class="card-body">
-                            <form method="POST">
+                            <form method="POST" enctype="multipart/form-data">
                                 {% csrf_token %}
+                                {{form | crispy}}
                                 <div class="text-end mt-4">
                                     <button type="submit" class="btn btn-primary " style="background-color:#fca311 !important; border-color:#fca311">
                                         Add Image

@@ -5,8 +5,8 @@ from django.contrib import messages
 
 from Ekartapp.adminFilter import ProductVariantFilter
 from Ekartapp.form import CategoryForm, ProductForm, UserForm, VariantTypeForm, \
-    VariantsForm, ProductVariantForm
-from Ekartapp.models import Category, Product, UserModel, VariantType, Variants, ProductVariant
+    VariantsForm, ProductVariantForm, ProductVariantImageForm
+from Ekartapp.models import Category, Product, UserModel, VariantType, Variants, ProductVariant, ProductVariantImage
 
 
 @login_required(login_url='login1')
@@ -248,20 +248,45 @@ def product_variant_delete(request,id):
 
 # Product Image
 @login_required(login_url='login1')
-def product_images_display(request):
-    return render(request,'admin/productImage/productImageDisplay.html')
+def product_images_display(request,id):
+    product_var = get_object_or_404(ProductVariant,id=id)
+    product_var_image = ProductVariantImage.objects.filter(product_variant=product_var)
+    return render(request,'admin/productImage/productImageDisplay.html',{'product_var_image':product_var_image,'product_var':product_var})
 
 @login_required(login_url='login1')
-def product_image_add(request):
-    return render(request,'admin/productImage/imageAdd.html')
+def product_image_add(request,id):
+    product_var = get_object_or_404(ProductVariant,id=id)
+    form = ProductVariantImageForm()
+    if request.method == 'POST':
+        form = ProductVariantImageForm(request.POST,request.FILES)
+        if form.is_valid():
+            image=form.save(commit=False)
+            image.product_variant = product_var
+            image.save()
+            return redirect('productImage', id=product_var.id)
+    return render(request,'admin/productImage/imageAdd.html',{'form':form})
 
 @login_required(login_url='login1')
-def product_image_edit(request):
-    return render(request,'admin/productImage/imageEdit.html')
+def product_image_edit(request,id):
+    product_image = get_object_or_404(ProductVariantImage,id=id)
+    print(product_image.product_variant)
+    if request.method == 'POST':
+        image_form = ProductVariantImageForm(request.POST,request.FILES,instance=product_image)
+        if image_form.is_valid():
+            image = image_form.save(commit=False)
+            image.product_variant =product_image.product_variant
+            image.save()
+            return redirect('productImage',id=product_image.id)
+    else:
+        image_form = ProductVariantImageForm(instance=product_image)
+
+    return render(request,'admin/productImage/imageEdit.html',{'image_form':image_form})
 
 @login_required(login_url='login1')
-def product_image_delete(request):
-    pass
+def product_image_delete(request,id):
+    i=ProductVariantImage.objects.get(id=id)
+    i.delete()
+    return redirect('productImage', id=i.product_variant.id)
 
 # Order Status
 @login_required(login_url='login1')

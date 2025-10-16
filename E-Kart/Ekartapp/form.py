@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 
 from Ekartapp.Choices import GENDER_CHOICES
 from Ekartapp.models import Custom_User, UserModel, Category, Product, UserAddress, VariantType, Variants, \
-    ProductVariant
+    ProductVariant, ProductVariantImage
 
 
 class CustomUserForm(UserCreationForm):
@@ -51,7 +51,6 @@ class VariantTypeForm(forms.ModelForm):
         fields = ('name','status')
 
 
-
 class VariantsForm(forms.ModelForm):
     class Meta:
         model = Variants
@@ -61,6 +60,12 @@ class ProductVariantForm(forms.ModelForm):
     class Meta:
         model = ProductVariant
         fields =('primary_variant','secondary_variant','price','quantity','is_default','status')
+
+
+class ProductVariantImageForm(forms.ModelForm):
+    class Meta:
+        model = ProductVariantImage
+        fields = ('image','is_default')
 
 
 class userAddressForm(forms.ModelForm):

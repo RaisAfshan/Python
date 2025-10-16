@@ -3,52 +3,64 @@
 {% block content %}
 <div class="container">
   <div class="row">
-    <h3 class="text-center mb-3">Products variants</h3>
-
-    <a href="{% url 'productDisplay' %}">
-      <button class="btn btn-primary mb-3"> Add variant</button>
-    </a>
-
-      <div class ="alert alert-success alert-dismissible fade show alert- mt-2" role="alert">
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
-      </div>
-        <div class="d-flex flex-row my-4">
+     <h3 class="text-center mb-3">Products variants</h3>
+    <div class="d-flex justify-content-between flex-row">
+<!--         <div class="d-flex flex-row my-4">-->
                 <form method="get" class="d-flex justify-content-end align-items-center gap-2">
                     {{ filter_product_variant.form }}
                 <button type="submit" class="btn btn-dark">Search</button>
                 </form>
-        </div>
+<!--        </div>-->
+
+          <a href="{% url 'productDisplay' %}">
+            <button class="btn btn-primary mb-3"> Add variant</button>
+          </a>
+    </div>
+
+<!--     {% if messages %}-->
+<!--      {% for message in messages %}-->
+<!--        <div class="alert alert-success alert-dismissible fade show  alert-{{ message.tags }} mt-2" role="alert">-->
+<!--          {{message}}-->
+<!--          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>-->
+<!--        </div>-->
+<!--     {% endfor %}-->
+<!--      {% endif %}-->
+
     <div class="col">
       <table class="table table-hover">
         <thead>
           <tr>
-            <th scope="col">#</th>
-            <th scope="col">Brand</th>
-            <th scope="col">Title</th>
-            <th scope="col">Primary Variant</th>
-            <th scope="col"> Secondary Variant</th>
-            <th scope="col">Quantity</th>
-            <th scope="col">Price</th>
-            <th scope="col">Actions</th>
+            <th scope="col" class="text-center">#</th>
+            <th scope="col" class="text-center">Brand</th>
+            <th scope="col" class="text-center">Title</th>
+            <th scope="col" class="text-center">Primary Variant</th>
+            <th scope="col" class="text-center"> Secondary Variant</th>
+            <th scope="col" class="text-center">Quantity</th>
+            <th scope="col" class="text-center">Price</th>
+            <th scope="col" class="text-center">Actions</th>
+            <th scope="col" class="text-center">Image view </th>
           </tr>
         </thead>
         <tbody>
       {% for variant in product_variants %}
         <tr>
           <th scope="row">{{variant.id}}</th>
-          <td>{{variant.product.brand}}</td>
-          <td>{{variant.product.title}}</td>
-          <td>{{variant.primary_variant}}</td>
+          <td class="text-center">{{variant.product.brand}}</td>
+          <td class="text-center">{{variant.product.title}}</td>
+          <td class="text-center">{{variant.primary_variant}}</td>
           {% if variant.secondary_variant %}
-          <td>{{variant.secondary_variant}}</td>
+          <td class="text-center">{{variant.secondary_variant}}</td>
           {% else %}
-          <td> </td>
+          <td class="text-center">--</td>
           {% endif %}
-          <td>{{variant.quantity}}</td>
-          <td>{{variant.price}}</td>
-          <td>
+          <td class="text-center">{{variant.quantity}}</td>
+          <td class="text-center">{{variant.price}}</td>
+          <td class="text-center">
             <a href="{% url 'productVariantEdit' variant.id %}" class="btn btn-sm btn-outline-warning me-3"> edit </a>
             <a href="{% url 'productVariantDelete' variant.id %}" class="btn btn-sm btn-outline-danger"> delete </a>
+          </td>
+          <td class="text-center">
+              <a href="{% url 'productImage' variant.id %}" class="text-primary"> View </a>
           </td>
         </tr>
         {% endfor %}

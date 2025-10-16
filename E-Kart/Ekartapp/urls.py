@@ -46,9 +46,10 @@ urlpatterns=[
     path('product-varinat-delete/<int:id>',admin_views.product_variant_delete,name='productVariantDelete'),
 
     #Product Image CRUD
-    path('product_image',admin_views.product_images_display,name='productImage'),
-    path('image_add',admin_views.product_image_add,name='imageAdd'),
-    path('image_edit',admin_views.product_image_edit,name='imageEdit'),
+    path('product_image/<int:id>',admin_views.product_images_display,name='productImage'),
+    path('image_add/<int:id>',admin_views.product_image_add,name='imageAdd'),
+    path('image_edit/<int:id>',admin_views.product_image_edit,name='imageEdit'),
+    path('image_delete/<int:id>',admin_views.product_image_delete,name='imageDelete'),
 
 
     #Product status
