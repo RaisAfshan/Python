@@ -5,9 +5,9 @@ from django.contrib import messages
 
 from Ekartapp.adminFilter import ProductVariantFilter
 from Ekartapp.form import CategoryForm, ProductForm, UserForm, VariantTypeForm, \
-    VariantsForm, ProductVariantForm, ProductVariantImageForm, CouponForm, OrderForm
+    VariantsForm, ProductVariantForm, ProductVariantImageForm, CouponForm, OrderForm, CarouselImageForm
 from Ekartapp.models import Category, Product, UserModel, VariantType, Variants, ProductVariant, ProductVariantImage, \
-    Coupons, Order, OrderItem
+    Coupons, Order, OrderItem, CarouselImage
 
 
 @login_required(login_url='login1')
@@ -374,34 +374,51 @@ def user_delete(request,id):
 # Banner CRUD
 @login_required(login_url='login1')
 def add_banner(request):
-
-    return render(request,'admin/banner/addBanner.html')
+    banner_form = CarouselImageForm()
+    if request.method == 'POST':
+        banner_form = CarouselImageForm(request.POST,request.FILES)
+        if banner_form.is_valid():
+            banner_form.save()
+            return redirect('bannerDisplay')
+    return render(request,'admin/banner/addBanner.html',{'banner_form':banner_form})
 
 @login_required(login_url='login1')
 def banner_display(request):
-    return render(request,'admin/banner/BannerList.html')
+    banner = CarouselImage.objects.filter(is_active=True)
+    return render(request,'admin/banner/BannerList.html',{'banner':banner})
 
 @login_required(login_url='login1')
-def banner_edit(request):
-    return render(request,'admin/banner/BannerEdit.html')
+def banner_edit(request,id):
+    banner_id = get_object_or_404(CarouselImage,id=id)
+    if request.method == 'POST':
+        banner_form = CarouselImageForm(request.POST,request.FILES,instance=banner_id)
+        if banner_form.is_valid():
+            banner_form.save()
+            return redirect('bannerDisplay')
+    else:
+        banner_form = CarouselImageForm(instance=banner_id)
+    return render(request,'admin/banner/BannerEdit.html',{'banner_form':banner_form})
 
 
 @login_required(login_url='login1')
-def banner_delete(request):
-    pass
+def banner_delete(request,id):
+    banner_id = get_object_or_404(CarouselImage,id=id)
+    banner_id.is_active = False
+    banner_id.save()
+    return redirect ('bannerDisplay')
 
 # Admin Home page
 @login_required(login_url='login1')
 def admin_homepage(request):
     return render(request,'admin/AdminHomePage.html')
 
-# READ
+# Coupon
 @login_required(login_url='login1')
 def coupon_list(request):
     coupons = Coupons.objects.filter(status=True)
     return render(request, 'admin/coupons/coupon_list.html', {'coupons': coupons})
 
-# CREATE
+
 @login_required(login_url='login1')
 def coupon_add(request):
     if request.method == 'POST':
@@ -415,7 +432,7 @@ def coupon_add(request):
     return render(request, 'admin/coupons/coupon_form.html', {'form': form, 'title': 'Add Coupon'})
 
 
-# UPDATE
+
 @login_required(login_url='login1')
 def coupon_edit(request, id):
     coupon = get_object_or_404(Coupons, id=id)

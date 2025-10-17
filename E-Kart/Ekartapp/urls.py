@@ -26,7 +26,7 @@ urlpatterns=[
     path('variant-type-edit/<int:id>',admin_views.variant_type_edit,name='variantTypeEdit'),
     path('variant-type-delete/<int:id>',admin_views.variant_type_delete,name='variantTypeDelete'),
 
-    #Varinant CRUD
+    #Variant CRUD
     path('variant-add',admin_views.variant_value_add,name='variantAdd'),
     path('variant-value-display',admin_views.variant_value_display,name='variantValueDisplay'),
     path('variant-value-edit/<int:id>',admin_views.variant_value_edit,name='variantValueEdit'),
@@ -75,7 +75,8 @@ urlpatterns=[
     #Banner
     path('banner_add',admin_views.add_banner,name='add_Banner'),
     path('banner_display',admin_views.banner_display,name='bannerDisplay'),
-    path('banner_edit',admin_views.banner_edit,name='bannerEdit'),
+    path('banner_edit/<int:id>',admin_views.banner_edit,name='bannerEdit'),
+    path('banner_delete/<int:id>',admin_views.banner_delete,name='bannerDelete'),
 
     # Admin home page
     path('admin_home_page/',admin_views.admin_homepage,name='adminHomePage'),

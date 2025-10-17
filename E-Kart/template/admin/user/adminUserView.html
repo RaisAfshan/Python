@@ -10,31 +10,31 @@
         <table class="table table-hover">
             <thead>
               <tr>
-                <th class="col text-dark">#</th>
-                <th class="col text-dark"> Username</th>
-                <th class="col text-dark">Profile pic</th>
-                <th class="col text-dark"> full name</th>
-                <th class="col text-dark">Phone number</th>
-                <th class="col text-dark">gender</th>
-                <th class="col text-dark">Email</th>
-                <th class="col text-dark">Created at</th>
-                <th class="col text-dark">Actions</th>
+                <th class="col text-dark text-capitalize">#</th>
+                <th class="col text-dark text-capitalize"> Username</th>
+                <th class="col text-dark text-capitalize">Profile pic</th>
+                <th class="col text-dark text-capitalize"> full name</th>
+                <th class="col text-dark text-capitalize">Phone number</th>
+                <th class="col text-dark text-capitalize">gender</th>
+                <th class="col text-dark text-capitalize">Email</th>
+                <th class="col text-dark text-capitalize">Created at</th>
+                <th class="col text-dark text-capitalize">Actions</th>
 
               </tr>
             </thead>
           <tbody>
           {% for user in userData %}
           <tr>
-              <td>{{user.id}}</td>
-              <td>{{user.user.username}}</td>
+              <td  class="text-capitalize">{{user.id}}</td>
+              <td  class="text-capitalize">{{user.user.username}}</td>
               <td>
                  <img src="{{user.profilePicture.url}}" alt="{{user.fullName}}" width="40" class="rounded-circle">
               </td>
-              <td>{{user.fullName}}</td>
-              <td>{{user.phoneNumber}}</td>
-              <td>{{user.gender}}</td>
-              <td>{{user.user.email}}</td>
-              <td>{{user.created_at | date:"d M Y, H:i"}}</td>
+              <td  class="text-capitalize">{{user.fullName}}</td>
+              <td  class="text-capitalize">{{user.phoneNumber}}</td>
+              <td  class="text-capitalize">{{user.gender}}</td>
+              <td >{{user.user.email}}</td>
+              <td  class="text-capitalize">{{user.created_at | date:"d M Y, H:i"}}</td>
 
               <td>
                   <a href="{% url 'adminUserEdit' user.id %}" class="btn btn-sm btn-outline-warning me-3">

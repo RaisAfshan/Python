@@ -2,7 +2,7 @@
 {% load static crispy_forms_tags %}
 {% block content %}
      <div class="container">
-        <div class="row justify-content-center">
+        <div class="row">
             <div class="col-12 col-md-8 col-lg-6">
                 <div class="text-center mb-4">
                     <h2 class="h3"> Edit Image form </h2>
@@ -13,7 +13,7 @@
                                 {% csrf_token %}
                                 {{image_form | crispy}}
                                 <div class="text-end mt-4">
-                                    <button type="submit" class="btn btn-primary " style="background-color:#fca311 !important; border-color:#fca311">
+                                    <button type="submit" class="btn btn-primary " >
                                         Edit
                                     </button>
                                 </div>

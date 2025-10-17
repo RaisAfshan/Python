@@ -12,31 +12,31 @@
                     <thead>
                       <tr>
                         <th class="col">#</th>
-                        <th class="col"> Category </th>
                         <th class="col"> Banner </th>
                          <th class="col"> Actions </th>
 
                       </tr>
                     </thead>
                   <tbody>
+                  {% for b in banner %}
                   <tr>
-                      <td>id</td>
-                      <td></td>
+                      <td>{{b.id}}</td>
                       <td>
-                         <img src="" alt="" width="40" class="rounded-circle">
+                         <img src="{{b.image.url}}" alt="" width="200px" class="img-thumbnail border-0">
                       </td>
 
                       <td>
-                          <a href="{% url 'bannerEdit' %}" class="btn btn-sm btn-outline-warning me-3">
+                          <a href="{% url 'bannerEdit' b.id %}" class="btn btn-sm btn-outline-warning me-3">
                               edit
                           </a>
 
-                          <a href="" class="btn btn-sm btn-outline-danger">
+                          <a href="{% url 'bannerDelete' b.id %}" class="btn btn-sm btn-outline-danger">
                               delete
                           </a>
                       </td>
 
                   </tr>
+                  {% endfor %}
                   </tbody>
                 </table>
             </div>

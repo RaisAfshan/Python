@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 
 from Ekartapp.Choices import GENDER_CHOICES
 from Ekartapp.models import Custom_User, UserModel, Category, Product, UserAddress, VariantType, Variants, \
-    ProductVariant, ProductVariantImage, Coupons, OrderItem, Order
+    ProductVariant, ProductVariantImage, Coupons, OrderItem, Order, CarouselImage
 
 
 class CustomUserForm(UserCreationForm):
@@ -90,7 +90,10 @@ class OrderForm(forms.ModelForm):
 #         model = OrderItem
 #         fields = ['']
 
-
+class CarouselImageForm(forms.ModelForm):
+    class Meta:
+        model = CarouselImage
+        fields = '__all__'
 
 class userAddressForm(forms.ModelForm):
     class Meta:

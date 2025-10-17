@@ -2,10 +2,10 @@
 {% load static  crispy_forms_tags %}
 {% block content %}
 <div class="container mt-4">
-  <div class="row justify-content-center">
+  <div class="row">
     <div class="col-12 col-md-8 col-lg-6">
       <div class="text-center mb-4">
-        <h2 class="h3">Category Form</h2>
+        <h2 class="h3">Edit Category</h2>
       </div>
         <div class="card shadow-sm">
             <div class="card-body">
@@ -16,6 +16,7 @@
                         <button type="submit" class="btn btn-primary" style="background-color: #fca311 !important; border-color: #fca311;">
                             Edit Category
                         </button>
+                        <a href="{% url 'categoryDisplay' %}" class="btn btn-secondary ">Cancel</a>
                     </div>
                 </form>
             </div>
