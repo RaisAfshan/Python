@@ -5,9 +5,9 @@ from django.contrib import messages
 
 from Ekartapp.adminFilter import ProductVariantFilter
 from Ekartapp.form import CategoryForm, ProductForm, UserForm, VariantTypeForm, \
-    VariantsForm, ProductVariantForm, ProductVariantImageForm, CouponForm
+    VariantsForm, ProductVariantForm, ProductVariantImageForm, CouponForm, OrderForm
 from Ekartapp.models import Category, Product, UserModel, VariantType, Variants, ProductVariant, ProductVariantImage, \
-    Coupons
+    Coupons, Order, OrderItem
 
 
 @login_required(login_url='login1')
@@ -291,11 +291,54 @@ def product_image_delete(request,id):
 # Order Status
 @login_required(login_url='login1')
 def orderStatus(request):
-    return render(request,'admin/order/orderStatus.html')
+    orders = OrderItem.objects.filter(status=True,order__is_seen=True).order_by('-order__created_at')
+    return render(request,'admin/order/orderStatus.html',{'orders':orders})
 
 @login_required(login_url='login1')
-def orderEdit(request):
-    return render(request,'admin/order/orderStatusEdit.html')
+def order_edit(request,id):
+    order_item = get_object_or_404(OrderItem, id=id)
+    order = order_item.order
+
+    if request.method == 'POST':
+        order_form = OrderForm(request.POST,instance=order)
+        # order_item_form = OrderItemForm(request.POST, instance=order_item)
+        if  order_form.is_valid():
+            order = order_form.save(commit=False)
+            order.user = order.user
+            order.save()
+
+            # order_item = order_item_form.save(commit=False)
+            # order_item.order = order
+            # order_item.product_variant = order_item.product_variant
+
+            messages.success(request, f"Order item #{order_item.id} updated successfully")
+            return redirect('orderStatus1')
+        else:
+            messages.error(request, "Failed to update order item")
+    else:
+        order_form = OrderForm(instance=order)
+        # order_item_form = OrderItemForm(instance=order_item)
+    return render(request, 'admin/order/orderStatusEdit.html',{'order_form':order_form,'order_item':order_item,'order':order})
+
+@login_required(login_url='login1')
+def order_delete(request,id):
+    order_item = get_object_or_404(OrderItem,id=id)
+    order_item.status = False
+    order_item.save()
+    return redirect('orderStatus1')
+
+@login_required(login_url='login1')
+def update_order_status(request,id):
+    order = get_object_or_404(Order,id=id)
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        if new_status:
+            order.status = new_status
+            order.save()
+            messages.success(request,f"Order #{order.id} status updated to '{new_status}'")
+        else:
+            messages.error(request,'No status selected')
+    return redirect('orderStatus1')
 
 # admin products overview
 @login_required(login_url='login1')
@@ -331,6 +374,7 @@ def user_delete(request,id):
 # Banner CRUD
 @login_required(login_url='login1')
 def add_banner(request):
+
     return render(request,'admin/banner/addBanner.html')
 
 @login_required(login_url='login1')

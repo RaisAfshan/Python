@@ -170,6 +170,7 @@ class OrderItem(models.Model):
     product_variant = models.ForeignKey(ProductVariant,on_delete=models.CASCADE,related_name='prod_order')
     quantity = models.PositiveIntegerField(default=1)
     price = models.DecimalField(max_digits=10,decimal_places=2)
+    status = models.BooleanField(default=True)
 
     def get_subtotal(self):
         return self.quantity * self.price

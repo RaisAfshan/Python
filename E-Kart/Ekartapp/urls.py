@@ -54,7 +54,9 @@ urlpatterns=[
 
     #Product status
     path('order_status', admin_views.orderStatus, name='orderStatus1'),
-    path('order_status_edit',admin_views.orderEdit,name='orderEdit1'),
+    path('update-order-status/<int:id>',admin_views.update_order_status,name='updateOrderStatus'),
+    path('order_status_edit/<int:id>',admin_views.order_edit,name='orderEdit1'),
+    path('order_status_delete/<int:id>',admin_views.order_delete,name='orderStatusDelete'),
 
     #Admin Products Cards
     path('admin_products_overview',admin_views.admin_products_overview,name='adminProducts'),

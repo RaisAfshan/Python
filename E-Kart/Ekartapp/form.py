@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 
 from Ekartapp.Choices import GENDER_CHOICES
 from Ekartapp.models import Custom_User, UserModel, Category, Product, UserAddress, VariantType, Variants, \
-    ProductVariant, ProductVariantImage, Coupons
+    ProductVariant, ProductVariantImage, Coupons, OrderItem, Order
 
 
 class CustomUserForm(UserCreationForm):
@@ -79,6 +79,17 @@ class CouponForm(forms.ModelForm):
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+
+class OrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['status','is_seen']
+
+# class OrderItemForm(forms.ModelForm):
+#     class Meta:
+#         model = OrderItem
+#         fields = ['']
+
 
 
 class userAddressForm(forms.ModelForm):
