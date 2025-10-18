@@ -195,7 +195,7 @@ def variant_value_delete(request,id):
 # Product Variant Crud
 @login_required(login_url='login1')
 def product_variant_display(request):
-    product_variants = ProductVariant.objects.filter(status=True,product__status=True,product__primary_variant__status=True,primary_variant__status=True).order_by('-created_at')
+    product_variants = ProductVariant.objects.filter(variant_status=True,product__status=True,product__primary_variant__status=True,primary_variant__status=True).order_by('-created_at')
     filter_product_variant = ProductVariantFilter(request.GET,queryset=product_variants)
     product_variants = filter_product_variant.qs
     return render(request,'admin/variant/productVariantDisplay.html',{'product_variants':product_variants,'filter_product_variant':filter_product_variant})
@@ -209,21 +209,28 @@ def product_variant_add(request,id):
     if product.secondary_variant:
         secondary_variants = Variants.objects.filter(variant_type=product.secondary_variant,status=True)
 
-    if request.method == 'POST':
+    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
         prod_var_form = ProductVariantForm(request.POST)
         if prod_var_form.is_valid():
             prod_var = prod_var_form.save(commit=False)
             prod_var.product = product
             prod_var.save()
-            messages.success(request, 'Product variant added successfully ')
-            return redirect('productVariantDisplay')
+            return JsonResponse({
+                'status':'success',
+                'primary_variant':prod_var.primary_variant.value,
+                'secondary_variant':prod_var.secondary_variant.value if prod_var.secondary_variant else '',
+                'price':str(prod_var.price),
+                'quantity':prod_var.quantity,
+                'is_default': prod_var.is_default,
+                'variant_status':prod_var.variant_status
+            })
         else:
-            messages.error(request, 'failed to add ')
+            return JsonResponse({'status':'error','errors':prod_var_form.errors})
     else:
         prod_var_form = ProductVariantForm()
 
-    prod_var_form.fields['primary_variant'].queryset  = primary_variants
-    prod_var_form.fields['secondary_variant'].queryset = secondary_variants
+        prod_var_form.fields['primary_variant'].queryset  = primary_variants
+        prod_var_form.fields['secondary_variant'].queryset = secondary_variants
 
     return render(request,'admin/variant/productVariantAdd.html',{'prod_var_form':prod_var_form,'product':product})
 

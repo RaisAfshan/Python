@@ -24,4 +24,85 @@
             </div>
         </div>
     </div>
+
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5>{{product.title}} Variants</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered" id="variantsTable">
+                <thead>
+                    <tr>
+                        <th>Primary Variant</th>
+                        <th>Secondary Variant</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Default</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for var in product.product_variant.all %}
+                    <tr>
+                        <td>{{ var.primary_variant.value }}</td>
+                        <td>
+                             {% if var.secondary_variant %}
+                                {{ var.secondary_variant.value }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>{{ var.price }}</td>
+                        <td>{{ var.quantity }}</td>
+                        <td>{{ var.is_default }}</td>
+                        <td>{{ var.variant_status }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.querySelector('form');
+            const tableBody = document.querySelector('#variantsTable tbody');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(form);
+
+                fetch("{% url 'productVariantAdd' product.id %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${data.primary_variant}</td>
+                            <td>${data.secondary_variant || ''}</td>
+                            <td>${data.price}</td>
+                            <td>${data.quantity}</td>
+                            <td>${data.is_default}</td>
+                            <td>${data.variant_status ? 'Active' : 'Inactive'}</td>
+                        `;
+                        tableBody.prepend(tr);
+                        form.reset();
+                    } else {
+                        alert('Error: ' + JSON.stringify(data.errors));
+                    }
+                })
+                .catch(err => console.error(err));
+            });
+        });
+</script>
+
+
 {% endblock %}

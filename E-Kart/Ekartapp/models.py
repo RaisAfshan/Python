@@ -91,7 +91,7 @@ class ProductVariant(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     quantity = models.PositiveIntegerField(default=0)
     is_default = models.BooleanField(default=False)
-    status = models.BooleanField(default=True)
+    variant_status = models.BooleanField(default=True)
 
     def save(self,*args,**kwargs):
         if self.is_default:

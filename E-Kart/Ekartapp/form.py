@@ -59,7 +59,7 @@ class VariantsForm(forms.ModelForm):
 class ProductVariantForm(forms.ModelForm):
     class Meta:
         model = ProductVariant
-        fields =('primary_variant','secondary_variant','price','quantity','is_default','status')
+        fields =('primary_variant','secondary_variant','price','quantity','is_default','variant_status')
 
 
 class ProductVariantImageForm(forms.ModelForm):
