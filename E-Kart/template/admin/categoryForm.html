@@ -5,16 +5,17 @@
   <div class="row ">
     <div class="col-12 col-md-8 col-lg-6">
       <div class="text-center mb-4">
-        <h2 class="h3">Add Category Form</h2>
+        <h2 class="h3">Add Category</h2>
       </div>
         <div class="card shadow-sm">
             <div class="card-body">
-                <form method="POST">
+                <form method="POST" id="categoryForm">
                     {% csrf_token %}
                     {{ category_form | crispy }}
+                    <small id="nameFeedback" class="text-danger"></small>
                     <div class="text-end mt-4">
                         <button type="submit" class="btn btn-primary" style="background-color: #fca311 !important; border-color: #fca311;">
-                            Add Category
+                            Add
                         </button>
                     </div>
                 </form>
@@ -23,5 +24,45 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded',()=>{
+    const nameInput = document.querySelector('#id_name');
+    const feedback = document.querySelector('#nameFeedback');
+    let typingTimer;
+    const doneTypingInterval = 600;
+
+    nameInput.addEventListener('keyup', () => {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(doneTyping,doneTypingInterval);
+
+
+    });
+
+    nameInput.addEventListener('keydown',()=>{
+        clearTimeout(typingTimer);
+    })
+
+    function doneTyping() {
+        const name = nameInput.value.trim();
+        if (name.length === 0){
+            feedback.textContent='';
+            return;
+        }
+        fetch(`/check-category-name/?name=${encodeURIComponent(name)}`)
+        .then(response=>response.json())
+        .then(data=>{
+            if (data.exist){
+                feedback.textContent = 'this Category name already exist!'
+                feedback.classList.remove('text-success');
+                feedback.classList.add('text-danger');
+            } else {
+                feedback.textContent = 'Category name is available';
+                feedback.classList.remove('text-danger');
+                feedback.classList.add('text-success');
+            }
+        })
+    }
+});
+</script>
 
 {% endblock %}

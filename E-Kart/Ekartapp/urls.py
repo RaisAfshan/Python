@@ -17,6 +17,7 @@ urlpatterns=[
     #Category CRUD
     path('category_display',admin_views.categoryDisplay,name='categoryDisplay'),
     path('category_form',admin_views.category_view,name='categoryForm'),
+    path('check-category-name/',admin_views.check_category_name,name='check_category_name'),
     path('category_edit/<int:id>',admin_views.category_edit,name='categoryEdit'),
     path('category_delete/<int:id>',admin_views.category_delete,name='categoryDelete'),
 

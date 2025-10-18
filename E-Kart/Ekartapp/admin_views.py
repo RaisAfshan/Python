@@ -1,5 +1,8 @@
+from os.path import exists
+
 from django.contrib.auth.decorators import login_required
 from django.db.models import Prefetch
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 
@@ -27,6 +30,13 @@ def category_view(request):
         else:
             messages.error(request,'error updating category')
     return render(request,'admin/categoryForm.html',{'category_form':category_form})
+
+@login_required(login_url='login1')
+def check_category_name(request):
+    name = request.GET.get('name','').strip()
+    exist = Category.objects.filter(name__iexact=name).exists()
+    return JsonResponse({'exist':exist})
+
 
 @login_required(login_url='login1')
 def categoryDisplay(request):
