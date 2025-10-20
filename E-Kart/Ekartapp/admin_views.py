@@ -1,5 +1,5 @@
 from os.path import exists
-
+import json
 from django.contrib.auth.decorators import login_required
 from django.db.models import Prefetch
 from django.http import JsonResponse
@@ -69,21 +69,61 @@ def category_delete(request,id):
     return redirect('categoryDisplay')
 
 # Product CRUD
+import json
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+
 @login_required(login_url='login1')
 def product_add(request):
-    Pform = ProductForm()
-    if request.method == 'POST':
+    if request.method == "POST" and request.headers.get('x-requested-with') == 'XMLHttpRequest':
         pform = ProductForm(request.POST)
+
         if pform.is_valid():
-            prod = pform.save(commit=False)
-            prod.created_by = request.user
-            prod.status = True
-            prod.save()
-            messages.success(request, "Product added successfully")
-            return redirect('productDisplay')
+            product = pform.save(commit=False)
+            product.created_by = request.user
+            product.status = True
+            product.save()
+
+            variants_json = request.POST.get("variants_json", "[]")
+            try:
+                variants_data = json.loads(variants_json)
+            except json.JSONDecodeError:
+                return JsonResponse({"status": "error", "errors": "Invalid variant JSON"})
+
+            for variant in variants_data:
+                try:
+                    ProductVariant.objects.create(
+                        product=product,
+                        primary_variant_id=variant["primary_variant"],
+                        secondary_variant_id=variant.get("secondary_variant") or None,
+                        price=variant["price"],
+                        quantity=variant["quantity"],
+                        is_default=variant["is_default"],
+                        variant_status=variant["variant_status"],
+                    )
+                except Exception as e:
+                    return JsonResponse({"status": "error", "errors": str(e)})
+
+            return JsonResponse({"status": "success", "message": "Product and variants added successfully!"})
         else:
-            messages.error(request,"error while adding products")
-    return render(request,'admin/productAddForm.html',{'Pform':Pform})
+            return JsonResponse({"status": "error", "errors": pform.errors})
+
+    else:
+        pform = ProductForm()
+        PVform = ProductVariantForm()
+        PVform.fields['primary_variant'].queryset = Variants.objects.none()
+        PVform.fields['secondary_variant'].queryset = Variants.objects.none()
+
+        variants = list(Variants.objects.filter(status=True)
+                        .values('id', 'value', 'variant_type__id', 'variant_type__name'))
+
+        return render(request,'admin/productAddForm.html',{
+            'Pform': pform,
+            'PVform': PVform,
+            'variants_json': json.dumps(variants)
+        })
+
+
 
 @login_required(login_url='login1')
 def product_view(request):
@@ -101,6 +141,12 @@ def product_edit(request,id):
     else:
         pform = ProductForm(instance=editData)
     return render(request,'admin/productEditForm.html',{'pform':pform})
+
+# @login_required(login_url='login1')
+# def product_edit(request,id):
+#     edit_Data = get_object_or_404(Product,id=id)
+#     if request.method == 'POST':
+
 
 @login_required(login_url='login1')
 def product_delete(request,id):

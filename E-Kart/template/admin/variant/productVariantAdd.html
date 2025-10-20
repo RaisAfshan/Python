@@ -40,6 +40,7 @@
                         <th>Quantity</th>
                         <th>Default</th>
                         <th>Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -57,6 +58,10 @@
                         <td>{{ var.quantity }}</td>
                         <td>{{ var.is_default }}</td>
                         <td>{{ var.variant_status }}</td>
+                        <td>
+                            <a href="{% url 'productVariantEdit' var.id %}" class="btn btn-sm btn-outline-warning me-3"> edit </a>
+                            <a href="{% url 'productVariantDelete' var.id %}" class="btn btn-sm btn-outline-danger"> delete </a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
