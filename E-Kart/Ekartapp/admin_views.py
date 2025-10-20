@@ -1,4 +1,4 @@
-from os.path import exists
+
 import json
 from django.contrib.auth.decorators import login_required
 from django.db.models import Prefetch
@@ -69,10 +69,6 @@ def category_delete(request,id):
     return redirect('categoryDisplay')
 
 # Product CRUD
-import json
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-
 @login_required(login_url='login1')
 def product_add(request):
     if request.method == "POST" and request.headers.get('x-requested-with') == 'XMLHttpRequest':
@@ -142,10 +138,86 @@ def product_edit(request,id):
         pform = ProductForm(instance=editData)
     return render(request,'admin/productEditForm.html',{'pform':pform})
 
-# @login_required(login_url='login1')
-# def product_edit(request,id):
-#     edit_Data = get_object_or_404(Product,id=id)
-#     if request.method == 'POST':
+@login_required(login_url='login1')
+def product_edit(request, id):
+    product = get_object_or_404(Product, id=id)
+
+    if request.method == "POST" and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        pform = ProductForm(request.POST, instance=product)
+
+        if pform.is_valid():
+            product = pform.save(commit=False)
+            product.created_by = request.user
+            product.status = True
+            product.save()
+
+            variants_json = request.POST.get("variants_json")
+            if variants_json:
+                variants_data = json.loads(variants_json)
+                existing_ids = []
+
+                for variant in variants_data:
+                    variant_id = variant.get("id")
+
+                    if variant_id:
+                        pv = ProductVariant.objects.get(id=variant_id, product=product)
+                        pv.primary_variant_id = variant["primary_variant"]
+                        pv.secondary_variant_id = variant.get("secondary_variant") or None
+                        pv.price = variant["price"]
+                        pv.quantity = variant["quantity"]
+                        pv.is_default = variant["is_default"]
+                        pv.variant_status = variant["variant_status"]
+                        pv.save()
+                        existing_ids.append(pv.id)
+                    else:
+
+                        new_pv = ProductVariant.objects.create(
+                            product=product,
+                            primary_variant_id=variant["primary_variant"],
+                            secondary_variant_id=variant.get("secondary_variant") or None,
+                            price=variant["price"],
+                            quantity=variant["quantity"],
+                            is_default=variant["is_default"],
+                            variant_status=variant["variant_status"],
+                        )
+                        existing_ids.append(new_pv.id)
+
+
+                ProductVariant.objects.filter(product=product).exclude(id__in=existing_ids).update(variant_status=False)
+
+            return JsonResponse({"status": "success", "message": "Product and variants updated successfully!"})
+        else:
+            return JsonResponse({"status": "error", "errors": pform.errors})
+
+    else:
+        pform = ProductForm(instance=product)
+        PVform = ProductVariantForm()
+
+        PVform.fields['primary_variant'].queryset = Variants.objects.none()
+        PVform.fields['secondary_variant'].queryset = Variants.objects.none()
+
+        variants = list(Variants.objects.filter(status=True)
+                        .values('id', 'value', 'variant_type__id', 'variant_type__name'))
+
+        existing_variants = list(ProductVariant.objects.filter(product=product)
+                                 .values('id', 'primary_variant_id', 'secondary_variant_id', 'price', 'quantity',
+                                         'is_default', 'variant_status'))
+
+        for variant in existing_variants:
+            variant['price'] = float(variant['price']) if variant['price'] is not None else 0.0
+
+        return render(request, 'admin/productEditForm.html', {
+            'Pform': pform,
+            'PVform': PVform,
+            'variants_json': json.dumps(variants),
+            'existing_variants_json': json.dumps(existing_variants),
+            'product': product
+        })
+
+
+
+
+
 
 
 @login_required(login_url='login1')

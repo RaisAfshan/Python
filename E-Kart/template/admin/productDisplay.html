@@ -35,7 +35,6 @@
               <th scope="col" class="text-dark">category</th>
               <th scope="col" class="text-dark text-center">primary variant</th>
               <th scope="col" class="text-dark text-center">secondary variant</th>
-              <th scope="col" class="text-dark text-center">Add Variants</th>
               <th scope="col" class="text-dark">actions</th>
             </tr>
           </thead>
@@ -56,10 +55,7 @@
                 {% endif %}
               </td>
               <td>
-                <a href="{% url 'productVariantAdd' product.id %}" class="btn btn-sm btn-outline-primary me-2"> Add Variant </a>
-              </td>
-              <td>
-                <a href="{% url 'productEdit' product.id %}" class="btn btn-sm btn-outline-warning me-2"> edit </a>
+                 <a href="{% url 'productEdit' product.id %}" class="btn btn-sm btn-outline-warning me-2"> edit </a>
                 <a href="{% url 'productDelete' product.id %}" class="btn btn-sm btn-outline-danger"> delete </a>
               </td>
             </tr>

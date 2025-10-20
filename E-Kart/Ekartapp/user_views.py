@@ -18,18 +18,18 @@ def user_home(request):
 
 
 def user_productHome(request):
-    basePrice = ProductVariant.objects.filter(price__lte=80000,product__category__name='Smartphones')[:4]
+    basePrice = ProductVariant.objects.filter(price__lte=80000,product__category__name='Smartphones',product__status=True,variant_status=True)[:4]
 
-    main_category = Category.objects.get(name="Fashion", parent__isnull=True)
+    main_category = Category.objects.get(name="Fashion", parent__isnull=True,status=True)
     subcategories = main_category.subcategory.all()
     products = ProductVariant.objects.filter(
         Q(product__category=main_category) | Q(product__category__in=subcategories),
-        is_default=True
-    )
+        is_default=True,product__status=True,variant_status=True
+    )[:4]
 
     carousel = CarouselImage.objects.filter(is_active=True).order_by('-created_at')
 
-    recent_products = ProductVariant.objects.filter(is_default=True).order_by('-created_at')[:4]
+    recent_products = ProductVariant.objects.filter(is_default=True,product__status=True,variant_status=True).order_by('-created_at')[:4]
 
     context = {
         'basePrice': basePrice,
@@ -190,7 +190,7 @@ def product_detail(request, id):
 
 # All products
 def all_products(request):
-    products = ProductVariant.objects.filter(is_default=True,status=True).prefetch_related('images')
+    products = ProductVariant.objects.filter(is_default=True,variant_status=True).prefetch_related('images')
     carousel = CarouselImage.objects.filter(is_active=True).order_by('-created_at')
     filterProduct = Product_Filter(request.GET,queryset=products)
     products =filterProduct.qs
@@ -210,11 +210,11 @@ def sub_category_product(request,id):
     if category.parent is None:
         sub_category = category.subcategory.all()
         if sub_category.exists():
-            products = ProductVariant.objects.filter(product__category__in=sub_category,is_default=True).prefetch_related('images')
+            products = ProductVariant.objects.filter(product__category__in=sub_category,is_default=True,product__status=True,variant_status=True).prefetch_related('images')
         else:
-            products = ProductVariant.objects.filter(product__category=category,is_default=True).prefetch_related('images')
+            products = ProductVariant.objects.filter(product__category=category,is_default=True,product__status=True,variant_status=True).prefetch_related('images')
     else:
-        products = ProductVariant.objects.filter(product__category=category,is_default=True).prefetch_related('images')
+        products = ProductVariant.objects.filter(product__category=category,is_default=True,product__status=True,variant_status=True).prefetch_related('images')
 
     min_price = request.GET.get('min_price')
     max_price = request.GET.get('max_price')

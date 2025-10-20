@@ -1,29 +1,183 @@
 {% extends 'admin/adminDashboard.html' %}
 {% load static crispy_forms_tags %}
 {% block content %}
-        <div class="container mt-4">
-            <div class="row">
-                <div class="col-12 col-md-8 col-lg-6">
-                    <div class="text-center mb-4">
-                        <h2 class="h3">Edit Product </h2>
-                    </div>
-                        <div class="card shadow-sm">
-                            <div class="card-body">
-                                <form method="POST">
-                                    {% csrf_token %}
-                                    {{ pform | crispy }}
-                                    <div class="text-end mt-4">
-                                        <button type="submit" class="btn btn-primary" >
-                                             edit
-                                        </button>
-                                        <a href="{% url 'productDisplay' %}" class="btn btn-danger ">Cancel</a>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                </div>
-            </div>
+
+<div class="container mt-4">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h4 class="text-center mb-4">Edit Product and Variants</h4>
+
+      <form id="productForm">
+        {% csrf_token %}
+        {{ Pform|crispy }}
+        <hr>
+        <h5>Product Variants</h5>
+
+        <table class="table table-bordered" id="variantTable">
+          <thead>
+            <tr>
+              <th id="primaryHeader">Primary Variant</th>
+              <th id="secondaryHeader">Secondary Variant</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Default?</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="variantBody"></tbody>
+        </table>
+
+        <button type="button" class="btn btn-secondary mb-3" id="addVariantBtn">+ Add Variant</button>
+
+        <div class="text-end mt-3">
+          <button type="submit" class="btn btn-primary">Update Product</button>
+          <a href="{% url 'productDisplay' %}" class="btn btn-danger">Cancel</a>
         </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const primaryHeader = document.getElementById("primaryHeader");
+  const secondaryHeader = document.getElementById("secondaryHeader");
+  const primarySelect = document.getElementById("id_primary_variant");
+  const secondarySelect = document.getElementById("id_secondary_variant");
+
+  const variantBody = document.getElementById("variantBody");
+  const addBtn = document.getElementById("addVariantBtn");
+
+  const allVariants = JSON.parse('{{ variants_json|escapejs }}');
+  const existingVariants = JSON.parse('{{ existing_variants_json|escapejs }}');
+
+  // Update header labels dynamically
+  const updateHeader = () => {
+    const primaryText = primarySelect.options[primarySelect.selectedIndex]?.text || "Primary Variant";
+    const secondaryText = secondarySelect.options[secondarySelect.selectedIndex]?.text || "Secondary Variant";
+    primaryHeader.textContent = primaryText;
+    secondaryHeader.textContent = secondaryText;
+  };
+
+  updateHeader();
+  primarySelect.addEventListener("change", updateHeader);
+  secondarySelect.addEventListener("change", updateHeader);
+
+  const getVariantOptions = (variantTypeId) => {
+    return allVariants
+      .filter(v => v.variant_type__id == variantTypeId)
+      .map(v => `<option value="${v.id}">${v.value}</option>`)
+      .join('');
+  };
+
+  // Pre-fill existing variants
+  const primaryTypeId = document.getElementById("id_primary_variant").value;
+  const secondaryTypeId = document.getElementById("id_secondary_variant").value;
+
+  const primaryOptions = primaryTypeId ? getVariantOptions(primaryTypeId) : '';
+  const secondaryOptions = secondaryTypeId ? getVariantOptions(secondaryTypeId) : '';
+
+  existingVariants.forEach(v => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>
+        <select class="form-select primary-variant">
+          ${primaryOptions}
+        </select>
+      </td>
+      <td>
+        <select class="form-select secondary-variant">
+          <option value="">---</option>
+          ${secondaryOptions}
+        </select>
+      </td>
+      <td><input type="number" class="form-control price" value="${v.price}" step="0.01"></td>
+      <td><input type="number" class="form-control quantity" value="${v.quantity}"></td>
+      <td><input type="checkbox" class="form-check-input is-default" ${v.is_default ? 'checked' : ''}></td>
+      <td><input type="checkbox" class="form-check-input variant-status" ${v.variant_status ? 'checked' : ''}></td>
+      <td><button type="button" class="btn btn-danger btn-sm delete-row">X</button></td>
+    `;
+    row.dataset.id = v.id;
+    variantBody.appendChild(row);
+
+    row.querySelector(".primary-variant").value = v.primary_variant_id;
+    if (v.secondary_variant_id) {
+      row.querySelector(".secondary-variant").value = v.secondary_variant_id;
+    }
+  });
+
+  // Add new variant rows
+  addBtn.addEventListener("click", () => {
+    const primaryTypeId = document.getElementById("id_primary_variant").value;
+    const secondaryTypeId = document.getElementById("id_secondary_variant").value;
+
+    const primaryOptions = primaryTypeId ? getVariantOptions(primaryTypeId) : '';
+    const secondaryOptions = secondaryTypeId ? getVariantOptions(secondaryTypeId) : '';
+
+    const newRow = document.createElement("tr");
+    newRow.innerHTML = `
+      <td><select class="form-select primary-variant">${primaryOptions}</select></td>
+      <td><select class="form-select secondary-variant"><option value="">---</option>${secondaryOptions}</select></td>
+      <td><input type="number" class="form-control price" step="0.01"></td>
+      <td><input type="number" class="form-control quantity"></td>
+      <td><input type="checkbox" class="form-check-input is-default"></td>
+      <td><input type="checkbox" class="form-check-input variant-status" checked></td>
+      <td><button type="button" class="btn btn-danger btn-sm delete-row">X</button></td>
+    `;
+    variantBody.appendChild(newRow);
+  });
+
+  // Remove row (mark inactive)
+  variantBody.addEventListener("click", (e) => {
+    if (e.target.classList.contains("delete-row")) {
+      const row = e.target.closest("tr");
+      const statusCheckbox = row.querySelector(".variant-status");
+      if (statusCheckbox) {
+        statusCheckbox.checked = false; // mark inactive
+        row.style.opacity = "0.6";
+      }
+    }
+  });
+
+  // Submit
+  document.getElementById("productForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const variants = [];
+
+    variantBody.querySelectorAll("tr").forEach(row => {
+      variants.push({
+        id: row.dataset.id || null,
+        primary_variant: row.querySelector(".primary-variant").value,
+        secondary_variant: row.querySelector(".secondary-variant").value || null,
+        price: parseFloat(row.querySelector(".price").value) || 0,
+        quantity: parseInt(row.querySelector(".quantity").value) || 0,
+        is_default: row.querySelector(".is-default").checked,
+        variant_status: row.querySelector(".variant-status").checked,
+      });
+    });
+
+    formData.append("variants_json", JSON.stringify(variants));
+
+    fetch("", {
+      method: "POST",
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+      body: formData
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          alert(data.message);
+          window.location.href = "{% url 'productDisplay' %}";
+        } else {
+          alert("Error: " + JSON.stringify(data.errors));
+        }
+      })
+      .catch(err => console.error(err));
+  });
+});
+</script>
 
 
 {% endblock %}
