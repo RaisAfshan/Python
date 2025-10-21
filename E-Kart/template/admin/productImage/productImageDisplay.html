@@ -2,17 +2,17 @@
 {% block content %}
   <div class="container">
     <div class="row">
-      <h3 class="text-center mb-3"> Product Images </h3>
+      <h3 class="text-center mb-3">  {{product_var.product.title}} - {{product_var.primary_variant.value}}/{{product_var.secondary_variant.value}} </h3>
       {% if product_var %}
       <a href="{% url 'imageAdd' product_var.id %}">
         <button class="btn btn-primary mb-3"> Add Image </button>
       </a>
       {% endif %}
 
-      <div class ="alert alert-success alert-dismissible fade show alert- mt-2" role="alert">
-<!--        message-->
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
-      </div>
+<!--      <div class ="alert alert-success alert-dismissible fade show alert- mt-2" role="alert">-->
+      <!--&lt;!&ndash;        message&ndash;&gt;-->
+<!--        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>-->
+<!--      </div>-->
 
       <div class="col">
         <table class="table table-hover">

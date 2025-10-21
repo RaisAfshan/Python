@@ -215,11 +215,6 @@ def product_edit(request, id):
         })
 
 
-
-
-
-
-
 @login_required(login_url='login1')
 def product_delete(request,id):
     product_data = Product.objects.get(id=id)

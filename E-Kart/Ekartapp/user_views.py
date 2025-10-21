@@ -154,29 +154,63 @@ def couponsUser(request):
     coupons = Coupons.objects.filter(status = True,is_active=True, expiry_date__gte = timezone.now())
     return render(request,'user/cart/all_coupons.html',{'coupons':coupons})
 
+from django.shortcuts import get_object_or_404, render
+from .models import Product, ProductVariant
+
 def product_detail(request, id):
-    product_variant = get_object_or_404(ProductVariant, id=id)
+    #  Get the product variant (must be active)
+    product_variant = get_object_or_404(
+        ProductVariant,
+        id=id,
+        variant_status=True,
+        product__status=True,
+        primary_variant__status=True,
+        primary_variant__variant_type__status=True
+    )
     product = product_variant.product
 
-    primary_values = ProductVariant.objects.filter(
-        product=product
-    ).values_list('primary_variant__value', flat=True).distinct()
+    #  Get active primary variant values for this product
+    primary_values = (
+        ProductVariant.objects.filter(
+            product=product,
+            variant_status=True,
+            primary_variant__status=True,
+            primary_variant__variant_type__status=True
+        )
+        .values_list('primary_variant__value', flat=True)
+        .distinct()
+    )
 
+    #  Selected values from query parameters
     selected_primary = request.GET.get('primary', product_variant.primary_variant.value)
     selected_secondary = request.GET.get('secondary', None)
 
+    #  Filter variants only by product + selected primary
     filtered_variants = ProductVariant.objects.filter(
         product=product,
-        primary_variant__value=selected_primary
+        variant_status=True,
+        primary_variant__value=selected_primary,
+        primary_variant__status=True,
+        primary_variant__variant_type__status=True,
     )
 
-    secondary_values = filtered_variants.values_list('secondary_variant__value', flat=True).distinct()
+    #  Get secondary variant values (for dropdown options)
+    secondary_values = (
+        filtered_variants.filter(secondary_variant__isnull=False)
+        .values_list('secondary_variant__value', flat=True)
+        .distinct()
+    )
 
+    #  Determine which variant to display
     if selected_secondary:
-        current_variant = filtered_variants.filter(secondary_variant__value=selected_secondary).first()
+        # We allow choosing secondary, but don’t filter globally by it
+        current_variant = filtered_variants.filter(
+            secondary_variant__value=selected_secondary
+        ).first()
     else:
         current_variant = filtered_variants.first()
 
+    #  Pass data to template
     context = {
         'prodDetail': current_variant or product_variant,
         'primary_values': primary_values,
@@ -186,6 +220,7 @@ def product_detail(request, id):
     }
 
     return render(request, 'user/productView/productDetail.html', context)
+
 
 
 # All products
@@ -277,7 +312,6 @@ def deleteAddress(request,id):
     return redirect('userAddress')
 
 # Order Placed
-
 @login_required(login_url='login1')
 def checkout_view(request):
     user = UserModel.objects.filter(user=request.user).first()
