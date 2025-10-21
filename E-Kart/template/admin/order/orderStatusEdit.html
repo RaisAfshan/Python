@@ -14,7 +14,7 @@
                                 {{order_form | crispy}}
                                 <div class="text-end mt-4">
                                     <button type="submit" class="btn btn-primary " style="">
-                                        Edit
+                                        Save
                                     </button>
                                     <a href="{% url 'orderStatus1' %}" class="btn btn-danger ">Cancel</a>
                                 </div>
@@ -22,6 +22,52 @@
                         </div>
                     </div>
             </div>
+            <h3>Order Items</h3>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Product Variant</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Subtotal (price x quantity)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in order_items %}
+                  <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ item.product_variant }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.price }}</td>
+                    <td>{{ item.get_subtotal }}</td>
+                  </tr>
+
+                {% empty %}
+                  <tr>
+                    <td colspan="5" class="text-center">No items in this order.</td>
+                  </tr>
+                {% endfor %}
+                 </tbody>
+                <tfoot>
+                        <tr>
+                            <td colspan="4" class="text-end">subtotal</td>
+                            <td  class="text-end">Rs {{subtotal | floatformat:2}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-end">GST</td>
+                            <td  class="text-end">{{gst  | floatformat:2}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-end">Delivery Charge</td>
+                            <td class="text-end">{{delivery_charge  | floatformat:2}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-end">Total Price</td>
+                            <td class="text-end">{{total_price  | floatformat:2}}</td>
+                        </tr>
+                </tfoot>
+            </table>
         </div>
     </div>
 {% endblock %}

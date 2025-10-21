@@ -10,37 +10,30 @@
           <tr>
             <th class="text-dark text-capitalize">#</th>
             <th class="text-dark text-capitalize">Customer name</th>
-            <th class="text-dark text-capitalize">Title</th>
-            <th class="text-dark text-capitalize">Variants</th>
-            <th class="text-dark text-capitalize">Price</th>
+            <th class="text-dark text-capitalize">address</th>
+            <th class="text-dark text-capitalize">Total price</th>
             <th class="text-dark text-capitalize">Status</th>
             <th class="text-dark text-capitalize">Order placed date</th>
             <th class="text-dark text-capitalize">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {% for o in orders %}
+          {% for o in order %}
           <tr>
             <td class="text-capitalize">{{ o.id }}</td>
-            <td class="text-capitalize">{{ o.order.user.fullName }}</td>
-            <td class="text-capitalize">{{ o.product_variant.product.title }}</td>
+             <td class="text-capitalize">{{ o.user.fullName }}</td>
+            <td class="text-capitalize">{{ o.address }}</td>
+            <td class="text-capitalize">{{ o.total_price }}</td>
             <td class="text-capitalize">
-              {{ o.product_variant.primary_variant.value }}
-              {% if o.product_variant.secondary_variant %}
-                /{{ o.product_variant.secondary_variant.value }}
-              {% endif %}
-            </td>
-            <td class="text-capitalize">{{ o.order.total_price }}</td>
-            <td class="text-capitalize">
-                {% if o.order.status == 'Order Placed' %}
-                <p class="text-primary"><i class="bi bi-check-circle"></i>{{o.order.status}}</p>
-                {% elif o.order.status == 'Shipment Ready' %}
-                 <p class="text-warning"><i class="bi bi-box-seam"></i> {{o.order.status}}</p>
-                {% elif o.order.status == 'Order Delivered' %}
-                 <p class="text-success"><i class="bi bi-check-circle-fill"></i> {{o.order.status}}</p>
+                {% if o.status == 'Order Placed' %}
+                <p class="text-primary"><i class="bi bi-check-circle"></i>{{o.status}}</p>
+                {% elif o.status == 'Shipment Ready' %}
+                 <p class="text-warning"><i class="bi bi-box-seam"></i> {{o.status}}</p>
+                {% elif o.status == 'Order Delivered' %}
+                 <p class="text-success"><i class="bi bi-check-circle-fill"></i> {{o.status}}</p>
                 {% endif %}
             </td>
-            <td class="text-capitalize">{{ o.order.created_at|date:"d M Y, H:i" }}</td>
+            <td class="text-capitalize">{{ o.created_at|date:"d M Y, H:i" }}</td>
             <td ><a href="{% url 'orderEdit1' o.id %}" class="btn btn-sm btn-outline-warning me-2">Edit</a>
                    <a href="{% url 'orderStatusDelete' o.id %}" class="btn btn-sm btn-outline-danger">cancel</a>
             </td>

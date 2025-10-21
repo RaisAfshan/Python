@@ -184,6 +184,7 @@ class CarouselImage(models.Model):
     def __str__(self):
         return self.title
 
+
 class EmailOTP(models.Model):
     user = models.OneToOneField(Custom_User, on_delete=models.CASCADE)
     otp = models.CharField(max_length=6)

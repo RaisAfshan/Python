@@ -1,5 +1,7 @@
 
 import json
+from decimal import Decimal
+
 from django.contrib.auth.decorators import login_required
 from django.db.models import Prefetch
 from django.http import JsonResponse
@@ -422,33 +424,51 @@ def product_image_delete(request,id):
 @login_required(login_url='login1')
 def orderStatus(request):
     orders = OrderItem.objects.filter(status=True,order__is_seen=True).order_by('-order__created_at')
-    return render(request,'admin/order/orderStatus.html',{'orders':orders})
+    order = Order.objects.filter(is_seen=True).order_by('-created_at')
+    return render(request,'admin/order/orderStatus.html',{'order':order})
 
 @login_required(login_url='login1')
 def order_edit(request,id):
-    order_item = get_object_or_404(OrderItem, id=id)
-    order = order_item.order
+    order = get_object_or_404(Order, id=id)
 
-    if request.method == 'POST':
+    order_item = order.items.all()
+
+    subtotal = sum(item.get_subtotal() for item in order_item)
+
+    gst = subtotal * Decimal('0.18')
+
+    delivery_charge = Decimal('40.00')
+
+    total_price = subtotal + gst + delivery_charge
+
+    if request.method == 'POST' :
         order_form = OrderForm(request.POST,instance=order)
         # order_item_form = OrderItemForm(request.POST, instance=order_item)
         if  order_form.is_valid():
-            order = order_form.save(commit=False)
-            order.user = order.user
-            order.save()
+            order_form.save()
 
             # order_item = order_item_form.save(commit=False)
             # order_item.order = order
             # order_item.product_variant = order_item.product_variant
 
-            messages.success(request, f"Order item #{order_item.id} updated successfully")
+            messages.success(request, f"Order item #{order.id} updated successfully")
             return redirect('orderStatus1')
         else:
             messages.error(request, "Failed to update order item")
     else:
         order_form = OrderForm(instance=order)
         # order_item_form = OrderItemForm(instance=order_item)
-    return render(request, 'admin/order/orderStatusEdit.html',{'order_form':order_form,'order_item':order_item,'order':order})
+    return render(request, 'admin/order/orderStatusEdit.html'
+                  ,{
+                      'order_form':order_form,
+                      'order':order,
+                      'order_items': order_item ,
+                      'subtotal':subtotal,
+                       'gst':gst,
+                       'delivery_charge':delivery_charge,
+                        'total_price':total_price
+
+                    })
 
 @login_required(login_url='login1')
 def order_delete(request,id):
