@@ -13,10 +13,10 @@
                                     {% csrf_token %}
                                     {{ Vform | crispy }}
                                     <div class="text-end mt-4">
-                                        <button type="submit" class="btn btn-primary" style="background-color: #fca311 !important; border-color:#fca311">
+                                        <button type="submit" class="btn btn-primary" >
                                              Save
                                         </button>
-                                         <a href="{% url 'variantDisplay' %}" class="btn btn-secondary ">Cancel</a>
+                                         <a href="{% url 'variantDisplay' %}" class="btn btn-danger ">Cancel</a>
                                     </div>
                                 </form>
                             </div>

@@ -62,14 +62,33 @@
                   {% endif %}
                 </td>
                 <td class="text-capitalize text-dark">{{ item.quantity }}</td>
-                <td class="text-end text-capitalize text-dark">₹{{ item.product_variant.price }}</td>
+                <td class="text-end text-capitalize text-dark">₹{{ item.product_variant.price | floatformat:2 }}</td>
               </tr>
               {% endfor %}
             </tbody>
             <tfoot>
+              <tr >
+                <td colspan="3" class="text-end text-dark">Total Price:</td>
+                <td class="text-end ">₹{{ subtotal| floatformat:2 }}</td>
+              </tr>
+              <tr >
+                <td colspan="3" class="text-end text-dark">GST:</td>
+                <td class="text-end ">₹{{ gst | floatformat:2 }}</td>
+              </tr>
+              <tr >
+                <td colspan="3" class="text-end text-dark">Delivery Charge:</td>
+                <td class="text-end text-success">₹{{ delivery_charge }}</td>
+              </tr>
+              {% if discount %}
+              <tr >
+                <td colspan="3" class="text-end text-dark">Delivery Charge:</td>
+                <td class="text-end text-danger">₹-{{ discount }}</td>
+              </tr>
+              {% endif %}
+
               <tr class="fw-bold">
                 <td colspan="3" class="text-end text-dark">Total:</td>
-                <td class="text-end text-success">₹{{ total }}</td>
+                <td class="text-end text-success  ">₹{{ total | floatformat:2}}</td>
               </tr>
             </tfoot>
           </table>

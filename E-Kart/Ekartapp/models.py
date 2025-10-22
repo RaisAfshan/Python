@@ -135,18 +135,29 @@ class Cart(models.Model):
     coupons = models.ForeignKey(Coupons,null=True,blank=True,on_delete=models.SET_NULL)
 
     @property
-    def total_price(self):
-        subtotal = sum(item.total_price for item in self.items.all())
-        gst = subtotal * Decimal('0.18')
-        delivery = Decimal('40.0')
-        discount = Decimal(0.00)
+    def subtotal(self):
+        return sum(item.total_price for item in self.items.all())
 
+    @property
+    def gst(self):
+        return self.subtotal * Decimal('0.18')
+    @property
+    def delivery_charge(self):
+        return  Decimal('40.00')
+
+    @property
+    def discount(self):
+        discount = Decimal('0.00')
         if self.coupons and self.coupons.is_valid():
             if self.coupons.discount_amount:
-                discount = Decimal(self.coupons.discount_amount)
+                discount=Decimal(self.coupons.discount_amount)
             elif self.coupons.discount_percent:
-                discount = subtotal * Decimal(self.coupons.discount_percent) / Decimal(100)
-        return subtotal + gst + delivery - discount
+                discount = self.subtotal * Decimal(self.coupons.discount_percent)/Decimal('100')
+        return discount
+
+    @property
+    def total_price(self):
+        return self.subtotal + self.gst + self.delivery_charge - self.discount
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart,on_delete=models.CASCADE,related_name='items')
@@ -163,6 +174,7 @@ class Order(models.Model):
     address = models.TextField()
     status = models.CharField(max_length=20,choices=ORDER_STATUS,default='Order Placed')
     created_at = models.DateTimeField(auto_now_add=True)
+    coupon = models.ForeignKey(Coupons,null=True,blank=True,on_delete=models.SET_NULL)
     is_seen = models.BooleanField(default=True)
 
 class OrderItem(models.Model):

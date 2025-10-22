@@ -112,6 +112,7 @@ urlpatterns=[
     path('user-proceedOrder',user_views.proceed_order_view,name='proceedOrder'),
     path('order-success/<int:id>',user_views.order_success_view,name='orderSuccess'),
     path('user-order-status-view',user_views.order_status,name='orderStatus'),
+    path('user-order-cancel/<int:id>',user_views.order_cancel,name='orderCancel'),
     path('change-address/', user_views.change_address, name='change_address'),
 
 

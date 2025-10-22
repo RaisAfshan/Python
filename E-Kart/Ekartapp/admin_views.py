@@ -3,14 +3,15 @@ import json
 from decimal import Decimal
 
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db.models import Prefetch
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 
-from Ekartapp.adminFilter import ProductVariantFilter
+from Ekartapp.adminFilter import ProductVariantFilter, ProductFilter
 from Ekartapp.form import CategoryForm, ProductForm, UserForm, VariantTypeForm, \
-    VariantsForm, ProductVariantForm, ProductVariantImageForm, CouponForm, OrderForm, CarouselImageForm
+    VariantsForm, ProductVariantForm, ProductVariantImageForm, CouponForm, OrderForm, CarouselImageForm, AdminUserForm
 from Ekartapp.models import Category, Product, UserModel, VariantType, Variants, ProductVariant, ProductVariantImage, \
     Coupons, Order, OrderItem, CarouselImage
 
@@ -126,7 +127,11 @@ def product_add(request):
 @login_required(login_url='login1')
 def product_view(request):
     products = Product.objects.filter(status=True,created_by=request.user).order_by('-created_at')
-    return render(request,'admin/productDisplay.html',{'products':products})
+    productFilter =ProductFilter(request.GET,queryset=products)
+    products = productFilter.qs
+
+
+    return render(request,'admin/productDisplay.html',{'products':products,'productFilter':productFilter})
 
 @login_required(login_url='login1')
 def product_edit(request,id):
@@ -313,7 +318,11 @@ def product_variant_display(request):
     product_variants = ProductVariant.objects.filter(variant_status=True,product__status=True,product__primary_variant__status=True,primary_variant__status=True).order_by('-created_at')
     filter_product_variant = ProductVariantFilter(request.GET,queryset=product_variants)
     product_variants = filter_product_variant.qs
-    return render(request,'admin/variant/productVariantDisplay.html',{'product_variants':product_variants,'filter_product_variant':filter_product_variant})
+
+    paginator = Paginator(product_variants,10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request,'admin/variant/productVariantDisplay.html',{'product_variants':page_obj,'filter_product_variant':filter_product_variant})
 
 @login_required(login_url='login1')
 def product_variant_add(request,id):
@@ -439,7 +448,18 @@ def order_edit(request,id):
 
     delivery_charge = Decimal('40.00')
 
-    total_price = subtotal + gst + delivery_charge
+    discount = Decimal('0.00')
+
+    if order.coupon:
+        if order.coupon.discount_amount:
+            discount = Decimal(order.coupon.discount_amount)
+        elif order.coupon.discount_percent:
+            discount =subtotal * Decimal(order.coupon.discount_percent)/Decimal('100')
+
+    total_price = subtotal + gst + delivery_charge - discount
+
+
+
 
     if request.method == 'POST' :
         order_form = OrderForm(request.POST,instance=order)
@@ -466,15 +486,22 @@ def order_edit(request,id):
                       'subtotal':subtotal,
                        'gst':gst,
                        'delivery_charge':delivery_charge,
-                        'total_price':total_price
+                       'total_price':total_price,
+                       'discount':discount
 
                     })
 
 @login_required(login_url='login1')
 def order_delete(request,id):
-    order_item = get_object_or_404(OrderItem,id=id)
-    order_item.status = False
-    order_item.save()
+    order = get_object_or_404(Order,id=id)
+
+    for item in order.items.all():
+        product_variant = item.product_variant
+        product_variant.quantity += item.quantity
+        product_variant.save()
+
+    order.is_seen = False
+    order.save()
     return redirect('orderStatus1')
 
 @login_required(login_url='login1')
@@ -498,19 +525,19 @@ def admin_products_overview(request):
 # admin user view
 @login_required(login_url='login1')
 def admin_user_view(request):
-    userData = UserModel.objects.filter(status=True)
+    userData = UserModel.objects.all()
     return render(request,'admin/user/adminUserView.html',{'userData':userData})
 
 @login_required(login_url='login1')
 def admin_user_edit(request,id):
     user_id = get_object_or_404(UserModel,id=id)
     if request.method == 'POST':
-        uform =UserForm(request.POST,instance=user_id)
+        uform =AdminUserForm(request.POST,instance=user_id)
         if uform.is_valid():
             uform.save()
             return redirect('adminUser')
     else:
-        uform = UserForm(instance=user_id)
+        uform = AdminUserForm(instance=user_id)
     return render(request,'admin/user/userEdit.html',{'uform':uform})
 
 @login_required(login_url='login1')

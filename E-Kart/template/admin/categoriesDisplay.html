@@ -24,6 +24,7 @@
       <table class="table table-bordered table-striped">
         <thead class="thead-dark">
           <tr>
+             <th> ID </th>
             <th>Main Category</th>
 <!--            <th>Subcategories</th>-->
             <th>Actions</th>
@@ -33,8 +34,9 @@
           {% for category in categories %}
             {% if not category.parent and category.status %}
               <tr>
+                  <th>{{category.id}}</th>
                   <td>{{ category.name }}</td>
-<!--                  <td></td>-->
+
                   <td>
                       <a href="{% url 'categoryEdit' category.id %}" class="btn btn-sm btn-outline-warning">Edit</a>
                       <a href="{% url 'categoryDelete' category.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
@@ -44,8 +46,8 @@
                   {% for sub in category.subcategory.all %}
                     {% if sub.status %}
                           <tr>
+                              <td>{{sub.id}}</td>
                               <td>-- {{ sub.name }}</td>
-<!--                              <td></td>-->
                               <td>
                                   <a href="{% url 'categoryEdit' sub.id %}" class="btn btn-sm btn-outline-warning">Edit</a>
                                   <a href="{% url 'categoryDelete' sub.id %}" class="btn btn-sm btn-outline-danger">Delete</a>

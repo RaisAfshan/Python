@@ -18,9 +18,9 @@ def user_home(request):
 
 
 def user_productHome(request):
-    basePrice = ProductVariant.objects.filter(price__lte=80000,product__category__name='Smartphones',product__status=True,variant_status=True)[:4]
+    basePrice = ProductVariant.objects.filter(price__lte=80000,product__category__id=2,product__status=True,variant_status=True)[:4]
 
-    main_category = Category.objects.get(name="Fashion", parent__isnull=True,status=True)
+    main_category = Category.objects.get(id=4, parent__isnull=True,status=True)
     subcategories = main_category.subcategory.all()
     products = ProductVariant.objects.filter(
         Q(product__category=main_category) | Q(product__category__in=subcategories),
@@ -39,6 +39,8 @@ def user_productHome(request):
         'main_category':main_category
     }
     return render(request,'user/userProductHome.html',context)
+
+
 # Cart
 @login_required(login_url='login1')
 def user_cart(request):
@@ -158,7 +160,7 @@ from django.shortcuts import get_object_or_404, render
 from .models import Product, ProductVariant
 
 def product_detail(request, id):
-    #  Get the product variant (must be active)
+    #  Get the product variant
     product_variant = get_object_or_404(
         ProductVariant,
         id=id,
@@ -169,7 +171,7 @@ def product_detail(request, id):
     )
     product = product_variant.product
 
-    #  Get active primary variant values for this product
+    #  Get primary variant values for this product
     primary_values = (
         ProductVariant.objects.filter(
             product=product,
@@ -222,10 +224,9 @@ def product_detail(request, id):
     return render(request, 'user/productView/productDetail.html', context)
 
 
-
 # All products
 def all_products(request):
-    products = ProductVariant.objects.filter(is_default=True,variant_status=True).prefetch_related('images')
+    products = ProductVariant.objects.filter(is_default=True,variant_status=True,product__status=True).prefetch_related('images')
     carousel = CarouselImage.objects.filter(is_active=True).order_by('-created_at')
     filterProduct = Product_Filter(request.GET,queryset=products)
     products =filterProduct.qs
@@ -333,6 +334,10 @@ def checkout_view(request):
         f"{address.state}, {address.zip_code}, {address.country}"
     )
 
+    gst = cart.gst
+    discount = cart.discount
+    delivery_charge = cart.delivery_charge
+    subtotal = cart.subtotal
     total = cart.total_price
 
     if request.method == "POST":
@@ -343,6 +348,7 @@ def checkout_view(request):
             user=user,
             address_text=final_address,
             total_price=total,
+            coupon=cart.coupons if cart.coupons else None
         )
 
         for item in items:
@@ -366,6 +372,10 @@ def checkout_view(request):
         'items': items,
         'address_text': address_text,
         'address':address,
+        'gst':gst,
+        'discount':discount,
+        'delivery_charge':delivery_charge,
+        'subtotal':subtotal,
         'total': total,
     }
     return render(request, 'user/order/checkout.html', context)
@@ -408,6 +418,12 @@ def proceed_order_view(request):
     if not address:
         messages.error(request,"Please set a default shipping address  before placing an order.")
         return redirect('userAddress')
+
+
+    discount = cart.discount
+    gst = cart.gst
+    subtotal = cart.subtotal
+    delivery_charge = cart.delivery_charge
     total_price = cart.total_price
 
     address_text = (
@@ -415,7 +431,7 @@ def proceed_order_view(request):
         f"{address.state}, {address.zip_code}, {address.country}"
     )
 
-    order = Order.objects.create(user=user,total_price=total_price,address=address_text)
+    order = Order.objects.create(user=user,total_price=total_price,address=address_text,coupon=cart.coupons if cart.coupons else None)
 
     for item in items:
         variant=item.product_variant
@@ -439,16 +455,29 @@ def proceed_order_view(request):
 @login_required(login_url='login1')
 def order_success_view(request,id):
     order = get_object_or_404(Order,id=id)
-
     return render(request,'user/order/orderSuccess.html',{'order':order})
+
+
 
 @login_required(login_url='login1')
 def order_status(request):
     user = UserModel.objects.filter(user=request.user).first()
-    orders =Order.objects.filter(user=user).order_by('created_at')
+    orders =Order.objects.filter(user=user,is_seen=True).order_by('created_at')
 
     return render(request,'user/order/orderStatus.html',{'orders':orders})
 
+@login_required(login_url='login1')
+def order_cancel(request,id):
+    order = get_object_or_404(Order,id=id)
+
+    for item in order.items.all():
+        product_variant = item.product_variant
+        product_variant.quantity += item.quantity
+        product_variant.save()
+
+    order.status = False
+    order.save()
+    return redirect('orderStatus')
 
 
 

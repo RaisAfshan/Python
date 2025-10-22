@@ -18,6 +18,7 @@
                 <th class="col text-dark text-capitalize">gender</th>
                 <th class="col text-dark text-capitalize">Email</th>
                 <th class="col text-dark text-capitalize">Created at</th>
+                  <th class="col text-dark text-capitalize">Status</th>
                 <th class="col text-dark text-capitalize">Actions</th>
 
               </tr>
@@ -35,6 +36,7 @@
               <td  class="text-capitalize">{{user.gender}}</td>
               <td >{{user.user.email}}</td>
               <td  class="text-capitalize">{{user.created_at | date:"d M Y, H:i"}}</td>
+              <td class ="text-capitalize">{{user.status}}</td>
 
               <td>
                   <a href="{% url 'adminUserEdit' user.id %}" class="btn btn-sm btn-outline-warning me-3">

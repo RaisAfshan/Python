@@ -62,9 +62,15 @@
                             <td colspan="4" class="text-end">Delivery Charge</td>
                             <td class="text-end">{{delivery_charge  | floatformat:2}}</td>
                         </tr>
+                        {% if discount %}
+                        <tr>
+                            <td colspan="4" class="text-end">Discount</td>
+                            <td class="text-end text-danger">-{{discount}}</td>
+                        </tr>
+                        {% endif %}
                         <tr>
                             <td colspan="4" class="text-end">Total Price</td>
-                            <td class="text-end">{{total_price  | floatformat:2}}</td>
+                            <td class="text-end text-dark fw-bold">{{total_price  | floatformat:2}}</td>
                         </tr>
                 </tfoot>
             </table>

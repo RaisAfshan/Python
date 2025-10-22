@@ -40,7 +40,7 @@ class AdminCarouselImage(admin.ModelAdmin):
     list_display = ('title','image','is_active')
 
 class AdminOrder(admin.ModelAdmin):
-    list_display = ('user','total_price','address','status','is_seen')
+    list_display = ('id','user','total_price','address','coupon','status','is_seen')
 
 class AdminOrderItem(admin.ModelAdmin):
     list_display = ('order','product_variant','quantity','price')

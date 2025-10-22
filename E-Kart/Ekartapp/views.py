@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login , logout
 from django.shortcuts import render, redirect
 
 from Ekartapp.form import CustomUserForm, UserForm
-from Ekartapp.models import Custom_User, EmailOTP
+from Ekartapp.models import Custom_User, EmailOTP, UserModel
 from Ekartapp.utility import send_otp
 
 
@@ -69,7 +69,6 @@ def verify_otp_view(request):
 
 def loginUser(request):
     if request.user.is_authenticated:
-        # Redirect authenticated users according to their role
         if request.user.is_staff:
             return redirect('adminHomePage')
         elif request.user.is_user:
@@ -93,11 +92,21 @@ def loginUser(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            login(request, user)
-
             if user.is_staff:
+                login(request, user)
                 return redirect('adminHomePage')
-            elif user.is_user:
+
+            if user.is_user:
+                try:
+                    user_profile = user.User
+                except UserModel.DoesNotExist:
+                    user_profile = None
+
+                if user_profile is None or not user_profile.status:
+                    messages.error(request,"Your account has been deactivated by admin")
+                    return redirect('login1')
+
+                login(request, user)
                 return redirect('userProductHome')
         else:
             messages.info(request, "Invalid Credentials")

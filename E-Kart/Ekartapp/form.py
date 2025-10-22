@@ -11,7 +11,6 @@ class CustomUserForm(UserCreationForm):
     username =forms.CharField()
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
 
-
     class Meta:
         model = Custom_User
         fields = ('username','email','password1')
@@ -22,6 +21,13 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = UserModel
         fields = ('fullName','phoneNumber','gender','profilePicture')
+
+class AdminUserForm(forms.ModelForm):
+    gender = forms.ChoiceField(label='Gender', choices= GENDER_CHOICES, required=True, widget=forms.RadioSelect(attrs={'class':'form-check-input mb-3'} ),initial='Male')
+
+    class Meta:
+        model = UserModel
+        fields = ('fullName','phoneNumber','gender','profilePicture','status')
 
 class CategoryForm(forms.ModelForm):
 
@@ -111,6 +117,11 @@ class VariantTypeForm(forms.ModelForm):
             'status':'Active Status',
         }
 
+        help_texts={
+            'name':'Enter your name of the variant type (e.g., Color,Size,Material).',
+            'status':'Tick this box if the variant type should be visible.'
+        }
+
 
 class VariantsForm(forms.ModelForm):
     class Meta:
@@ -193,7 +204,7 @@ class CouponForm(forms.ModelForm):
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['status','is_seen']
+        fields = ['status',]
 
 # class OrderItemForm(forms.ModelForm):
 #     class Meta:
