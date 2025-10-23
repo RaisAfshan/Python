@@ -1,0 +1,62 @@
+{% extends 'admin/adminDashboard.html' %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h3 class="mb-3">OrderId : {{order.id}}</h3>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th class="text-dark">#</th>
+                  <th class="text-dark">Product Variant</th>
+                  <th class="text-dark">Quantity</th>
+                  <th class="text-dark">Price</th>
+                  <th class="text-dark">Subtotal (price x quantity)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in order_items %}
+                  <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ item.product_variant }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.price }}</td>
+                    <td>{{ item.get_subtotal }}</td>
+                  </tr>
+
+                {% empty %}
+                  <tr>
+                    <td colspan="5" class="text-center">No items in this order.</td>
+                  </tr>
+                {% endfor %}
+                 </tbody>
+                <tfoot>
+                        <tr>
+                            <td colspan="4" class="text-end">Subtotal</td>
+                            <td  class="text-end text-dark fw-bolder">Rs {{subtotal | floatformat:2}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-end">GST</td>
+                            <td  class="text-end text-dark">Rs .{{gst  | floatformat:2}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-end">Delivery Charge</td>
+                            <td class="text-end text-dark">Rs {{delivery_charge  | floatformat:2}}</td>
+                        </tr>
+                        {% if discount %}
+                        <tr>
+                            <td colspan="4" class="text-end">Discount</td>
+                            <td class="text-end text-danger">Rs-{{discount}}</td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <td colspan="4" class="text-end">Total Price</td>
+                            <td class="text-end text-dark fw-bold">Rs. <span class="text-success fw-bolder">{{total_price  | floatformat:2}}</span></td>
+                        </tr>
+                </tfoot>
+            </table>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

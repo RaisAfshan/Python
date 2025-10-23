@@ -130,8 +130,12 @@ def product_view(request):
     productFilter =ProductFilter(request.GET,queryset=products)
     products = productFilter.qs
 
+    paginator = Paginator(products,10)
+    page_number =request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
-    return render(request,'admin/productDisplay.html',{'products':products,'productFilter':productFilter})
+
+    return render(request,'admin/productDisplay.html',{'products':page_obj,'productFilter':productFilter})
 
 @login_required(login_url='login1')
 def product_edit(request,id):
@@ -503,6 +507,39 @@ def order_delete(request,id):
     order.is_seen = False
     order.save()
     return redirect('orderStatus1')
+
+@login_required(login_url='login1')
+def order_item_detail(request,id):
+    order = get_object_or_404(Order,id=id)
+    order_item = order.items.all()
+
+    subtotal = sum(item.get_subtotal() for item in order_item)
+
+    gst = subtotal * Decimal('0.18')
+
+    delivery_charge = Decimal('40.00')
+
+    discount = Decimal('0.00')
+
+    if order.coupon:
+        if order.coupon.discount_amount:
+            discount = Decimal(order.coupon.discount_amount)
+        elif order.coupon.discount_percent:
+            discount = subtotal * Decimal(order.coupon.discount_percent) / Decimal('100')
+
+    total_price = subtotal + gst + delivery_charge - discount
+
+    context = {
+        'subtotal' : subtotal,
+        'gst': gst,
+        'delivery_charge':delivery_charge,
+        'discount':discount,
+        'order_items':order_item,
+        'order':order,
+        'total_price':total_price
+    }
+
+    return render(request,'admin/order/order_Item_view.html',context)
 
 @login_required(login_url='login1')
 def update_order_status(request,id):

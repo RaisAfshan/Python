@@ -21,7 +21,7 @@
           {% for o in order %}
           <tr>
             <td class="text-capitalize">{{ o.id }}</td>
-             <td class="text-capitalize">{{ o.user.fullName }}</td>
+             <td class="text-capitalize"><a href="{% url 'orderItemView' o.id %}">{{ o.user.fullName }}</a></td>
             <td class="text-capitalize">{{ o.address }}</td>
             <td class="text-capitalize">{{ o.total_price }}</td>
             <td class="text-capitalize">

@@ -255,16 +255,16 @@ class userAddressForm(forms.ModelForm):
             'is_default': 'Check if this is your default address.',
         }
 
-        widgets = {
-            'address_type': forms.Select(attrs={'class': 'form-select'}),
-            'home_name': forms.TextInput(attrs={'placeholder': 'e.g., Building A, House 23', 'class': 'form-control'}),
-            'street_address': forms.TextInput(attrs={'placeholder': 'e.g., 5th Avenue, MG Road', 'class': 'form-control'}),
-            'city': forms.TextInput(attrs={'placeholder': 'Enter city', 'class': 'form-control'}),
-            'state': forms.TextInput(attrs={'placeholder': 'Enter state', 'class': 'form-control'}),
-            'country': forms.TextInput(attrs={'placeholder': 'Enter country', 'class': 'form-control'}),
-            'zip_code': forms.TextInput(attrs={'placeholder': 'Enter postal/zip code', 'class': 'form-control'}),
-            'is_default': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-        }
+        # widgets = {
+        #     'address_type': forms.Select(attrs={'class': 'form-select'}),
+        #     'home_name': forms.TextInput(attrs={'placeholder': 'e.g., Building A, House 23', 'class': 'form-control'}),
+        #     'street_address': forms.TextInput(attrs={'placeholder': 'e.g., 5th Avenue, MG Road', 'class': 'form-control'}),
+        #     'city': forms.TextInput(attrs={'placeholder': 'Enter city', 'class': 'form-control'}),
+        #     'state': forms.TextInput(attrs={'placeholder': 'Enter state', 'class': 'form-control'}),
+        #     'country': forms.TextInput(attrs={'placeholder': 'Enter country', 'class': 'form-control'}),
+        #     'zip_code': forms.TextInput(attrs={'placeholder': 'Enter postal/zip code', 'class': 'form-control'}),
+        #     'is_default': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        # }
 
 
 

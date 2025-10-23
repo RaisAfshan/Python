@@ -1,6 +1,7 @@
 from wsgiref.util import request_uri
 
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.shortcuts import render,redirect
 from decimal import Decimal
 from django.contrib import messages
@@ -230,6 +231,10 @@ def all_products(request):
     carousel = CarouselImage.objects.filter(is_active=True).order_by('-created_at')
     filterProduct = Product_Filter(request.GET,queryset=products)
     products =filterProduct.qs
+
+    # paginator = Paginator(products,10)
+    # page_number = request.GET.get('page')
+    # page_obj = paginator.get_page(page_number)
     return render(request,'user/products/allproducts.html',{'products':products,'filterProduct':filterProduct,'carousel':carousel})
 
 # Category
@@ -462,7 +467,7 @@ def order_success_view(request,id):
 @login_required(login_url='login1')
 def order_status(request):
     user = UserModel.objects.filter(user=request.user).first()
-    orders =Order.objects.filter(user=user,is_seen=True).order_by('created_at')
+    orders =Order.objects.filter(user=user,is_seen=True).order_by('-created_at')
 
     return render(request,'user/order/orderStatus.html',{'orders':orders})
 

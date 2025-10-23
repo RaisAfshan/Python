@@ -26,21 +26,21 @@
             <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th>#</th>
-                  <th>Product Variant</th>
-                  <th>Quantity</th>
-                  <th>Price</th>
-                  <th>Subtotal (price x quantity)</th>
+                  <th class="text-dark text-capitalize">#</th>
+                  <th class="text-dark text-capitalize">Product Variant</th>
+                  <th class="text-dark text-capitalize">Quantity</th>
+                  <th class="text-dark text-capitalize">Price</th>
+                  <th class="text-dark text-capitalize">Subtotal (price x quantity)</th>
                 </tr>
               </thead>
               <tbody>
                 {% for item in order_items %}
                   <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ item.product_variant }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>{{ item.price }}</td>
-                    <td>{{ item.get_subtotal }}</td>
+                    <td class="text-dark text-capitalize">{{ forloop.counter }}</td>
+                    <td class="text-dark text-capitalize">{{ item.product_variant }}</td>
+                    <td class="text-dark text-capitalize">{{ item.quantity }}</td>
+                    <td class="text-dark text-capitalize">{{ item.price }}</td>
+                    <td class="text-dark text-capitalize">{{ item.get_subtotal }}</td>
                   </tr>
 
                 {% empty %}
@@ -52,15 +52,15 @@
                 <tfoot>
                         <tr>
                             <td colspan="4" class="text-end">subtotal</td>
-                            <td  class="text-end">Rs {{subtotal | floatformat:2}}</td>
+                            <td  class="text-end text-dark  fw-bolder">Rs {{subtotal | floatformat:2}}</td>
                         </tr>
                         <tr>
                             <td colspan="4" class="text-end">GST</td>
-                            <td  class="text-end">{{gst  | floatformat:2}}</td>
+                            <td  class="text-end text-dark">Rs {{gst  | floatformat:2}}</td>
                         </tr>
                         <tr>
                             <td colspan="4" class="text-end">Delivery Charge</td>
-                            <td class="text-end">{{delivery_charge  | floatformat:2}}</td>
+                            <td class="text-end text-dark"> Rs {{delivery_charge  | floatformat:2}}</td>
                         </tr>
                         {% if discount %}
                         <tr>
@@ -70,7 +70,7 @@
                         {% endif %}
                         <tr>
                             <td colspan="4" class="text-end">Total Price</td>
-                            <td class="text-end text-dark fw-bold">{{total_price  | floatformat:2}}</td>
+                            <td class="text-end text-dark fw-bold">Rs <span class="text-success fw-bolder">{{total_price  | floatformat:2}} </span></td>
                         </tr>
                 </tfoot>
             </table>

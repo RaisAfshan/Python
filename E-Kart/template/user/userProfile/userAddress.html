@@ -19,11 +19,18 @@
     {% for ad in address %}
       <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 d-flex justify-content-center">
           <div class="card" style="width: 18rem;">
+              {% if ad.is_default == True %}
+              <span class="badge bg-secondary position-absolute top-0 start-50 translate-middle-x mt-2 px-3 py-2">
+                  Default
+              </span>
+              {% else %}
+
+              {% endif %}
             <div class="card-body d-flex flex-column">
-              <h6 class="card-title text-dark fw-bold mb-1">{{ad.user.fullName}}</h6>
-              <p class="card-text text-dark mb-1">{{ad.street_address}} </p>
-              <p class="card-text text-dark mb-1">{{ad.city}} </p>
-              <p class="card-text text-dark mb-0">{{ad.state}}, {{ad.country}} , {{ad.zip_code}}</p>
+              <h6 class="card-title text-dark fw-bold mb-1 text-capitalize">{{ad.user.fullName}}</h6>
+              <p class="card-text text-dark mb-1 text-capitalize">{{ad.street_address}} </p>
+              <p class="card-text text-dark mb-1 text-capitalize">{{ad.city}} </p>
+              <p class="card-text text-dark mb-0 text-capitalize">{{ad.state}}, {{ad.country}} , {{ad.zip_code}}</p>
               <div class="mt-auto">
                 <a href="{% url 'userAddressEdit' ad.id %}" class="card-link " style="color:blue">Edit</a>
                   <span class="text-dark mx-3"> | </span>
